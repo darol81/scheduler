@@ -20,3 +20,50 @@ export function friendlyError(error, fallback = 'Something went wrong.') {
       return error.message || fallback;
   }
 }
+
+/**
+ * Turn a Supabase Auth (GoTrue) error into something worth showing a human.
+ * A different error family from friendlyError above: these carry a string
+ * `code` and a numeric `status`, not a Postgres SQLSTATE.
+ * Codes: @supabase/auth-js/dist/main/lib/error-codes.d.ts
+ */
+export function friendlyAuthError(error, fallback = 'Something went wrong. Please try again.') {
+  if (!error) return fallback;
+
+  // Network/CORS failures never reach the server, so they have no code.
+  if (error.name === 'AuthRetryableFetchError') {
+    return 'Could not reach the server. Check your connection.';
+  }
+
+  switch (error.code) {
+    case 'invalid_credentials':
+      // Deliberately vague. GoTrue returns one undifferentiated error for both
+      // "no such email" and "wrong password"; saying which would turn the sign
+      // in form into an account-existence oracle. Do not make this friendlier.
+      return 'Wrong email or password.';
+    case 'user_already_exists':
+    case 'email_exists':
+      return 'That email is already registered. Sign in instead.';
+    case 'weak_password':
+      // GoTrue says exactly why -- too short, missing a character class, or
+      // found in a breach -- and its wording is better than anything here.
+      return error.message || 'Choose a stronger password.';
+    case 'validation_failed':
+    case 'email_address_invalid':
+      return 'Enter a valid email address.';
+    case 'over_request_rate_limit':
+    case 'over_email_send_rate_limit':
+      return 'Too many attempts. Wait a minute and try again.';
+    case 'signup_disabled':
+    case 'email_provider_disabled':
+      return 'New registrations are closed.';
+    case 'email_not_confirmed':
+      // Should not fire -- email confirmation is off -- but keeps the failure
+      // legible if someone flips that toggle in the Supabase dashboard.
+      return 'Confirm your email address before signing in.';
+    case 'user_banned':
+      return 'That account is locked.';
+    default:
+      return error.message || fallback;
+  }
+}

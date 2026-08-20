@@ -12,6 +12,7 @@ import DashboardPage from './pages/DashboardPage';
 import EntriesPage from './pages/EntriesPage';
 import GoalsPage from './pages/GoalsPage';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 import { isSupabaseConfigured, supabase } from './lib/supabaseClient';
 import { loadSession, sessionChanged } from './store/authSlice';
@@ -62,6 +63,7 @@ export default function App() {
     <Suspense fallback={<Spinner />}>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
             <Route path="/" element={<DashboardPage />} />

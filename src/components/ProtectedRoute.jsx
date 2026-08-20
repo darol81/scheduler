@@ -15,7 +15,8 @@ export default function ProtectedRoute() {
   }
 
   if (!isSignedIn) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+    // pathname + search, so a bounced /reports?range=90d comes back whole.
+    return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />;
   }
 
   return <Outlet />;

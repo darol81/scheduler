@@ -21,7 +21,8 @@ export default function Layout() {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const email = user && user.email;
-  const avatar = user && user.user_metadata ? user.user_metadata.avatar_url : null;
+  // Accounts are email + password, so there is no provider avatar to fetch.
+  const initial = email ? email.trim().charAt(0).toUpperCase() : '?';
 
   return (
     <div className="min-h-screen">
@@ -38,9 +39,14 @@ export default function Layout() {
           </nav>
 
           <div className="flex items-center gap-3">
-            {avatar ? (
-              <img src={avatar} alt="" className="h-8 w-8 rounded-full" referrerPolicy="no-referrer" />
-            ) : null}
+            <span
+              aria-hidden="true"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700"
+            >
+              {initial}
+            </span>
+            {/* The email is hidden below sm:, so keep it announced either way. */}
+            <span className="sr-only">Signed in as {email}</span>
             <span className="hidden text-sm text-slate-500 sm:inline">{email}</span>
             <button type="button" className="btn-secondary" onClick={() => dispatch(signOut())}>
               Sign out

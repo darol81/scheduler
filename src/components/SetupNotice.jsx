@@ -26,8 +26,11 @@ export default function SetupNotice() {
             Supabase SQL editor.
           </li>
           <li>
-            Enable the Google provider under{' '}
-            <span className="font-medium">Authentication &rarr; Providers</span>.
+            Under{' '}
+            <span className="font-medium">
+              Authentication &rarr; Sign In / Providers &rarr; Email
+            </span>
+            , turn <span className="font-medium">Confirm email</span> off.
           </li>
           <li>Restart the dev server so Vite picks up the new environment variables.</li>
         </ol>

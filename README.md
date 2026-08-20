@@ -1,12 +1,12 @@
 # Worktime Scheduler
 
-A personal worktime tracker: sign in with Google, log time against your own
-categories after the fact, set per-category goals, and see how the current
-day / week / month is tracking.
+A personal worktime tracker: register with an email and password, log time
+against your own categories after the fact, set per-category goals, and see how
+the current day / week / month is tracking.
 
 - **React 19 + JavaScript** (no TypeScript), built with Vite
 - **Redux Toolkit** (`configureStore`, `createSlice`, `createAsyncThunk`, `createSelector`)
-- **Supabase** for Postgres, Google sign-in and row level security
+- **Supabase** for Postgres, email/password auth and row level security
 - **Tailwind CSS 4** for styling, **Recharts** for the reports
 
 ---
@@ -29,22 +29,35 @@ enables row level security with a policy per table. The anon key ships to the
 browser, so those policies are the only thing keeping one account's data away
 from another's. Don't skip that part of the script.
 
-### 1.3 Enable Google sign-in
+### 1.3 Enable email sign-in
 
-1. In the [Google Cloud Console](https://console.cloud.google.com/apis/credentials),
-   create an **OAuth 2.0 Client ID** of type *Web application*.
-2. Under **Authorized redirect URIs**, add:
+Under **Authentication -> Sign In / Providers -> Email**, turn **Confirm email**
+off. That is the only required step -- the Email provider itself is on by
+default, and with confirmations off there is no mail to send and no SMTP to
+configure.
 
-   ```
-   https://<your-project-ref>.supabase.co/auth/v1/callback
-   ```
+Worth the extra ten seconds, on that same page:
 
-   (Supabase shows this exact URL on the Google provider page.)
-3. Copy the **Client ID** and **Client secret** into Supabase under
-   **Authentication -> Providers -> Google**, and enable the provider.
-4. Under **Authentication -> URL Configuration**, set:
-   - **Site URL**: `http://localhost:5173`
-   - **Redirect URLs**: add `http://localhost:5173/**`
+- **Minimum password length**: raise it from `6` to `10`. This is the *only*
+  enforced floor -- the check in the sign-up form is a convenience, and anyone
+  can call the auth endpoint directly with the anon key from the page source.
+  Keep it in step with `MIN_PASSWORD_LENGTH` in
+  [`src/components/AuthForm.jsx`](src/components/AuthForm.jsx).
+- **Google**: confirm the provider is **disabled**. Nothing points at it any
+  more, and an enabled provider is a live sign-in path whether or not the UI
+  offers it.
+
+Optional: **Authentication -> Attack Protection -> Prevent use of leaked
+passwords** rejects anything found in the HaveIBeenPwned corpus (only a
+five-character hash prefix leaves Supabase, never the password). It is the
+highest-value switch here but is Pro-plan only; on the free tier a 12-character
+minimum is the compensating control. Once your own accounts exist you can also
+turn **Allow new users to sign up** off -- the app already renders that as
+"New registrations are closed."
+
+Under **Authentication -> URL Configuration**, set:
+- **Site URL**: `http://localhost:5173`
+- **Redirect URLs**: add `http://localhost:5173/**`
 
 ## 2. Run the app
 
@@ -118,6 +131,30 @@ supabase/
   schema.sql
 ```
 
+### Accounts and passwords
+
+Supabase Auth owns the credential. `signUp` / `signInWithPassword` in
+[`src/store/authSlice.js`](src/store/authSlice.js) hand the password straight to
+Supabase over TLS; it is bcrypt-hashed into `auth.users` and **this app never
+hashes, stores or logs it**. There is no `users` table here -- every row keys on
+`auth.users.id`, and the RLS policies in `supabase/schema.sql` compare it against
+`auth.uid()` from the signed JWT. That, not the anon key, is what keeps one
+account's hours away from another's.
+
+The password lives in React state for the life of the form and nowhere else: not
+in Redux (the store keeps only the session), not in `localStorage`, and not in
+the DevTools action log -- `createAppStore` redacts `meta.arg.password`, which
+`createAsyncThunk` would otherwise expose in plaintext.
+
+One honest consequence of skipping email confirmation: registering an address
+that already has an account says so, which means the sign-up form can be used to
+probe whether a given email is registered. Signing in cannot -- a wrong password
+and an unknown address return the same message on purpose. Turning off new
+signups (§1.3) closes the gap.
+
+There is no password-reset flow yet. A forgotten password is reset from
+**Authentication -> Users** in the Supabase dashboard.
+
 ### Categories
 
 Categories are archived rather than deleted, so old entries keep their label.
@@ -127,8 +164,8 @@ appears for categories with nothing logged against them.
 
 ## Deploying
 
-When you host this somewhere other than localhost, add the new origin to both:
+When you host this somewhere other than localhost, add the new origin under
+Supabase **Authentication -> URL Configuration** (Site URL and Redirect URLs).
 
-- the Google OAuth client's **Authorized redirect URIs** (via the Supabase
-  callback URL, which does not change), and
-- Supabase **Authentication -> URL Configuration** (Site URL and Redirect URLs).
+That is the whole list. There is no external identity provider to reconfigure,
+which is the main practical reason this app uses passwords rather than OAuth.

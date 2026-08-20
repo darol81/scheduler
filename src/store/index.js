@@ -19,6 +19,18 @@ export function createAppStore(preloadedState) {
   return configureStore({
     reducer,
     preloadedState,
+    // createAsyncThunk copies its argument onto every dispatched action as
+    // meta.arg, which would put the plaintext password in the DevTools action
+    // log -- and in any "here is my DevTools trace" bug report. Redact it.
+    devTools: {
+      actionSanitizer: (action) =>
+        action.meta && action.meta.arg && action.meta.arg.password
+          ? {
+              ...action,
+              meta: { ...action.meta, arg: { ...action.meta.arg, password: '***' } },
+            }
+          : action,
+    },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         // Supabase session objects are plain JSON but large and deeply nested;
