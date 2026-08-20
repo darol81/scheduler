@@ -1,0 +1,1032 @@
+{
+  "version": 1,
+  "meta": {
+    "lastScanned": "2026-08-20T12:58:12.938Z",
+    "fileCount": 57,
+    "hits": 0,
+    "misses": 0,
+    "renderedHash": "3c13f07202d666bb0aee26fbca71b2dbb7528984edf6958c8b24a1acabed2984",
+    "storeUpdatedAt": "2026-08-20T12:58:12.941Z"
+  },
+  "files": {
+    ".claude/commands/designqc.md": {
+      "description": "",
+      "tokens": 343,
+      "hash": "fb5066aac6fd7e5a",
+      "size": 1369,
+      "mtimeMs": 1787230692901.409,
+      "updatedAt": "2026-08-20T12:58:12.914Z",
+      "source": "scan"
+    },
+    ".claude/commands/reframe.md": {
+      "description": "Mode: migrate [framework]",
+      "tokens": 551,
+      "hash": "17a75695be5d4629",
+      "size": 2221,
+      "mtimeMs": 1787230692901.409,
+      "updatedAt": "2026-08-20T12:58:12.916Z",
+      "source": "scan"
+    },
+    ".claude/commands/security-audit.md": {
+      "description": "Layer 1 — Dependencies",
+      "tokens": 510,
+      "hash": "e6f7e0b7337c9c86",
+      "size": 2060,
+      "mtimeMs": 1787230692901.409,
+      "updatedAt": "2026-08-20T12:58:12.918Z",
+      "source": "scan"
+    },
+    ".claude/rules/openwolf.md": {
+      "description": "",
+      "tokens": 251,
+      "hash": "0e6845e32d3752ea",
+      "size": 1003,
+      "mtimeMs": 1787230692742.6785,
+      "updatedAt": "2026-08-20T12:58:12.920Z",
+      "source": "scan"
+    },
+    ".claude/settings.json": {
+      "description": "",
+      "tokens": 668,
+      "hash": "499d9a295cef2627",
+      "size": 2336,
+      "mtimeMs": 1787230692742.6785,
+      "updatedAt": "2026-08-20T12:58:12.920Z",
+      "source": "scan"
+    },
+    ".gitignore": {
+      "description": "Git ignore rules",
+      "tokens": 26,
+      "hash": "e330084a9e90c819",
+      "size": 95,
+      "mtimeMs": 1787224321266.0847,
+      "updatedAt": "2026-08-20T12:58:12.921Z",
+      "source": "scan"
+    },
+    "CLAUDE.md": {
+      "description": "OpenWolf",
+      "tokens": 143,
+      "hash": "baf970620ace797b",
+      "size": 571,
+      "mtimeMs": 1787230692742.6785,
+      "updatedAt": "2026-08-20T12:58:12.922Z",
+      "source": "scan"
+    },
+    "index.html": {
+      "description": "Worktime Scheduler",
+      "tokens": 82,
+      "hash": "d810a44583f149c9",
+      "size": 305,
+      "mtimeMs": 1787224321305.3728,
+      "updatedAt": "2026-08-20T12:58:12.922Z",
+      "source": "scan"
+    },
+    "manual_work_todo.md": {
+      "description": "",
+      "tokens": 730,
+      "hash": "9308e7c482021b7c",
+      "size": 2946,
+      "mtimeMs": 1787229895502.0244,
+      "updatedAt": "2026-08-20T12:58:12.923Z",
+      "source": "scan"
+    },
+    "other.md": {
+      "description": "",
+      "tokens": 28,
+      "hash": "de81d915ea268db2",
+      "size": 111,
+      "mtimeMs": 1787230610071.477,
+      "updatedAt": "2026-08-20T12:58:12.923Z",
+      "source": "scan"
+    },
+    "package-lock.json": {
+      "description": "npm lock file",
+      "tokens": 32154,
+      "hash": "1bceddde4ef3f8d2",
+      "size": 112537,
+      "mtimeMs": 1787225158945.2927,
+      "updatedAt": "2026-08-20T12:58:12.923Z",
+      "source": "scan"
+    },
+    "package.json": {
+      "description": "Node.js package manifest",
+      "tokens": 229,
+      "hash": "4ffc402d30b0667c",
+      "size": 799,
+      "mtimeMs": 1787224321246.035,
+      "updatedAt": "2026-08-20T12:58:12.923Z",
+      "source": "scan"
+    },
+    "README.md": {
+      "description": "Project documentation",
+      "tokens": 1696,
+      "hash": "ce721f4669f2e5b5",
+      "size": 6786,
+      "mtimeMs": 1787229602599.2644,
+      "updatedAt": "2026-08-20T12:58:12.924Z",
+      "source": "scan"
+    },
+    "src/App.jsx": {
+      "description": "ReportsPage — renders chart — uses useEffect",
+      "tokens": 851,
+      "hash": "e36d48fcb03992d4",
+      "size": 2978,
+      "mtimeMs": 1787229490166.605,
+      "updatedAt": "2026-08-20T12:58:12.924Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "App",
+          "kind": "fn",
+          "startLine": 26,
+          "endLine": 81,
+          "tokens": 505
+        }
+      ]
+    },
+    "src/components/AuthForm.jsx": {
+      "description": "Keep this at or above the \"Minimum password length\" set in the Supabase",
+      "tokens": 2825,
+      "hash": "7ffd864912c5d1ec",
+      "size": 9886,
+      "mtimeMs": 1787229471858.521,
+      "updatedAt": "2026-08-20T12:58:12.925Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "AuthForm",
+          "kind": "fn",
+          "startLine": 37,
+          "endLine": 259,
+          "tokens": 2442
+        }
+      ]
+    },
+    "src/components/CategoryDot.jsx": {
+      "description": "CategoryDot",
+      "tokens": 73,
+      "hash": "a142e37eda2b2023",
+      "size": 254,
+      "mtimeMs": 1787224703772.5996,
+      "updatedAt": "2026-08-20T12:58:12.925Z",
+      "source": "scan"
+    },
+    "src/components/CategorySelect.jsx": {
+      "description": "Plain <select> over the user's active categories.",
+      "tokens": 296,
+      "hash": "b60583565490bef8",
+      "size": 1036,
+      "mtimeMs": 1787224703779.7317,
+      "updatedAt": "2026-08-20T12:58:12.925Z",
+      "source": "scan"
+    },
+    "src/components/DurationInput.jsx": {
+      "description": "Free-text duration field. Keeps the raw string locally, parses on every",
+      "tokens": 606,
+      "hash": "ae11ad07fb7693dc",
+      "size": 2119,
+      "mtimeMs": 1787224703748.321,
+      "updatedAt": "2026-08-20T12:58:12.925Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "DurationInput",
+          "kind": "fn",
+          "startLine": 9,
+          "endLine": 70,
+          "tokens": 501
+        }
+      ]
+    },
+    "src/components/DurationInput.test.jsx": {
+      "description": "setup",
+      "tokens": 571,
+      "hash": "43518ce834f0c145",
+      "size": 1998,
+      "mtimeMs": 1787225232256.5686,
+      "updatedAt": "2026-08-20T12:58:12.926Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "setup",
+          "kind": "fn",
+          "startLine": 5,
+          "endLine": 63,
+          "tokens": 524
+        }
+      ]
+    },
+    "src/components/EmptyState.jsx": {
+      "description": "EmptyState",
+      "tokens": 125,
+      "hash": "10ba43c5407e1046",
+      "size": 435,
+      "mtimeMs": 1787224673023.8975,
+      "updatedAt": "2026-08-20T12:58:12.926Z",
+      "source": "scan"
+    },
+    "src/components/ErrorBanner.jsx": {
+      "description": "ErrorBanner",
+      "tokens": 142,
+      "hash": "80b3760e2c761af8",
+      "size": 496,
+      "mtimeMs": 1787224673007.0051,
+      "updatedAt": "2026-08-20T12:58:12.926Z",
+      "source": "scan"
+    },
+    "src/components/GoalProgressBar.jsx": {
+      "description": "One goal, its target and how far the current period has got.",
+      "tokens": 454,
+      "hash": "6e6cf53e0bac0b65",
+      "size": 1586,
+      "mtimeMs": 1787224703795.4636,
+      "updatedAt": "2026-08-20T12:58:12.926Z",
+      "source": "scan"
+    },
+    "src/components/Layout.jsx": {
+      "description": "NAV_ITEMS",
+      "tokens": 677,
+      "hash": "f0b3de5d4f6becba",
+      "size": 2369,
+      "mtimeMs": 1787229503653.0642,
+      "updatedAt": "2026-08-20T12:58:12.926Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "navClass",
+          "kind": "fn",
+          "startLine": 13,
+          "endLine": 19,
+          "tokens": 65
+        },
+        {
+          "name": "Layout",
+          "kind": "fn",
+          "startLine": 20,
+          "endLine": 64,
+          "tokens": 480
+        }
+      ]
+    },
+    "src/components/LogTimeForm.jsx": {
+      "description": "The main way time gets into the app: pick a category and a day, then type how",
+      "tokens": 1171,
+      "hash": "bab27b6deb3e3f91",
+      "size": 4098,
+      "mtimeMs": 1787224747553.161,
+      "updatedAt": "2026-08-20T12:58:12.926Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "LogTimeForm",
+          "kind": "fn",
+          "startLine": 16,
+          "endLine": 121,
+          "tokens": 1004
+        }
+      ]
+    },
+    "src/components/ProtectedRoute.jsx": {
+      "description": "ProtectedRoute",
+      "tokens": 248,
+      "hash": "e7b81e0361e80357",
+      "size": 866,
+      "mtimeMs": 1787229490166.605,
+      "updatedAt": "2026-08-20T12:58:12.926Z",
+      "source": "scan"
+    },
+    "src/components/SetupNotice.jsx": {
+      "description": "Shown instead of the app when .env.local has no Supabase credentials, so the",
+      "tokens": 563,
+      "hash": "0f30f2d94dc3c847",
+      "size": 1968,
+      "mtimeMs": 1787229503653.0642,
+      "updatedAt": "2026-08-20T12:58:12.927Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "SetupNotice",
+          "kind": "fn",
+          "startLine": 5,
+          "endLine": 44,
+          "tokens": 505
+        }
+      ]
+    },
+    "src/components/Spinner.jsx": {
+      "description": "Spinner",
+      "tokens": 101,
+      "hash": "a6f975670fac7797",
+      "size": 351,
+      "mtimeMs": 1787224672991.3855,
+      "updatedAt": "2026-08-20T12:58:12.927Z",
+      "source": "scan"
+    },
+    "src/index.css": {
+      "description": "Styles: 2 rules, 1 layers",
+      "tokens": 633,
+      "hash": "8fd3b063e9671c37",
+      "size": 2214,
+      "mtimeMs": 1787224631364.8008,
+      "updatedAt": "2026-08-20T12:58:12.927Z",
+      "source": "scan"
+    },
+    "src/lib/errors.js": {
+      "description": "Turn a PostgREST/Postgres error into something worth showing a human.",
+      "tokens": 823,
+      "hash": "e9187b8c281b1934",
+      "size": 2880,
+      "mtimeMs": 1787229368048.702,
+      "updatedAt": "2026-08-20T12:58:12.927Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "friendlyError",
+          "kind": "fn",
+          "startLine": 5,
+          "endLine": 29,
+          "tokens": 279
+        },
+        {
+          "name": "friendlyAuthError",
+          "kind": "fn",
+          "startLine": 30,
+          "endLine": 70,
+          "tokens": 500
+        }
+      ]
+    },
+    "src/lib/errors.test.js": {
+      "description": "Declares message",
+      "tokens": 656,
+      "hash": "53f38e62d9b135fe",
+      "size": 2295,
+      "mtimeMs": 1787229521855.4924,
+      "updatedAt": "2026-08-20T12:58:12.927Z",
+      "source": "scan"
+    },
+    "src/lib/palette.js": {
+      "description": "Category colours. Picked to stay distinguishable next to each other in the",
+      "tokens": 207,
+      "hash": "46bf9d71ae22648c",
+      "size": 722,
+      "mtimeMs": 1787224612978.1296,
+      "updatedAt": "2026-08-20T12:58:12.928Z",
+      "source": "scan"
+    },
+    "src/lib/supabaseClient.js": {
+      "description": "True once .env.local actually has credentials. The UI checks this so a fresh",
+      "tokens": 380,
+      "hash": "9dec597d7fcd0c17",
+      "size": 1327,
+      "mtimeMs": 1787224411633.702,
+      "updatedAt": "2026-08-20T12:58:12.928Z",
+      "source": "scan"
+    },
+    "src/main.jsx": {
+      "description": "",
+      "tokens": 128,
+      "hash": "7c211f5852a1b0c7",
+      "size": 447,
+      "mtimeMs": 1787224653040.0784,
+      "updatedAt": "2026-08-20T12:58:12.928Z",
+      "source": "scan"
+    },
+    "src/pages/CategoriesPage.jsx": {
+      "description": "ColorPicker — renders form — uses useState, useMemo",
+      "tokens": 2462,
+      "hash": "cacb02840cb30453",
+      "size": 8616,
+      "mtimeMs": 1787224909682.438,
+      "updatedAt": "2026-08-20T12:58:12.929Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "ColorPicker",
+          "kind": "fn",
+          "startLine": 27,
+          "endLine": 48,
+          "tokens": 184
+        },
+        {
+          "name": "CategoryRow",
+          "kind": "fn",
+          "startLine": 49,
+          "endLine": 125,
+          "tokens": 705
+        },
+        {
+          "name": "CategoriesPage",
+          "kind": "fn",
+          "startLine": 126,
+          "endLine": 262,
+          "tokens": 1348
+        }
+      ]
+    },
+    "src/pages/DashboardPage.jsx": {
+      "description": "StatCard — uses useMemo",
+      "tokens": 2257,
+      "hash": "0afa6dd10092fe90",
+      "size": 7897,
+      "mtimeMs": 1787224863611.27,
+      "updatedAt": "2026-08-20T12:58:12.929Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "StatCard",
+          "kind": "fn",
+          "startLine": 26,
+          "endLine": 35,
+          "tokens": 84
+        },
+        {
+          "name": "DashboardPage",
+          "kind": "fn",
+          "startLine": 36,
+          "endLine": 207,
+          "tokens": 1901
+        }
+      ]
+    },
+    "src/pages/EntriesPage.jsx": {
+      "description": "PRESETS — renders form, table — uses useState, useMemo",
+      "tokens": 2769,
+      "hash": "5c57a3d999f963cc",
+      "size": 9691,
+      "mtimeMs": 1787225002843.956,
+      "updatedAt": "2026-08-20T12:58:12.929Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "EntryRow",
+          "kind": "fn",
+          "startLine": 30,
+          "endLine": 145,
+          "tokens": 1136
+        },
+        {
+          "name": "EntriesPage",
+          "kind": "fn",
+          "startLine": 146,
+          "endLine": 279,
+          "tokens": 1285
+        }
+      ]
+    },
+    "src/pages/GoalsPage.jsx": {
+      "description": "NewGoalForm — renders form — uses useState, useMemo",
+      "tokens": 2043,
+      "hash": "ea8c57fced27da2e",
+      "size": 7149,
+      "mtimeMs": 1787225205205.8843,
+      "updatedAt": "2026-08-20T12:58:12.930Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "NewGoalForm",
+          "kind": "fn",
+          "startLine": 17,
+          "endLine": 91,
+          "tokens": 682
+        },
+        {
+          "name": "GoalRow",
+          "kind": "fn",
+          "startLine": 92,
+          "endLine": 151,
+          "tokens": 517
+        },
+        {
+          "name": "GoalsPage",
+          "kind": "fn",
+          "startLine": 152,
+          "endLine": 213,
+          "tokens": 556
+        }
+      ]
+    },
+    "src/pages/LoginPage.jsx": {
+      "description": "LoginPage",
+      "tokens": 36,
+      "hash": "403a1ab1586fdf23",
+      "size": 125,
+      "mtimeMs": 1787229480119.3203,
+      "updatedAt": "2026-08-20T12:58:12.930Z",
+      "source": "scan"
+    },
+    "src/pages/RegisterPage.jsx": {
+      "description": "RegisterPage",
+      "tokens": 37,
+      "hash": "ae0afb48979a505f",
+      "size": 128,
+      "mtimeMs": 1787229480119.3203,
+      "updatedAt": "2026-08-20T12:58:12.930Z",
+      "source": "scan"
+    },
+    "src/pages/ReportsPage.jsx": {
+      "description": "Recharts hands us minutes; humans want \"1h 20min\".",
+      "tokens": 3117,
+      "hash": "131a69f225dbc15d",
+      "size": 10909,
+      "mtimeMs": 1787225064078.9502,
+      "updatedAt": "2026-08-20T12:58:12.930Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "DurationTooltip",
+          "kind": "fn",
+          "startLine": 47,
+          "endLine": 71,
+          "tokens": 271
+        },
+        {
+          "name": "ReportsPage",
+          "kind": "fn",
+          "startLine": 72,
+          "endLine": 300,
+          "tokens": 2481
+        }
+      ]
+    },
+    "src/store/authSlice.js": {
+      "description": "Register with an email and a password.",
+      "tokens": 1476,
+      "hash": "79cd38b0769f3b41",
+      "size": 5165,
+      "mtimeMs": 1787229390732.9329,
+      "updatedAt": "2026-08-20T12:58:12.930Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "sessionFulfilled",
+          "kind": "fn",
+          "startLine": 69,
+          "endLine": 75,
+          "tokens": 52
+        },
+        {
+          "name": "credentialsRejected",
+          "kind": "fn",
+          "startLine": 76,
+          "endLine": 132,
+          "tokens": 562
+        },
+        {
+          "name": "selectSession",
+          "kind": "fn",
+          "startLine": 133,
+          "endLine": 133,
+          "tokens": 17
+        },
+        {
+          "name": "selectUser",
+          "kind": "fn",
+          "startLine": 134,
+          "endLine": 134,
+          "tokens": 16
+        },
+        {
+          "name": "selectAuthStatus",
+          "kind": "fn",
+          "startLine": 135,
+          "endLine": 135,
+          "tokens": 18
+        },
+        {
+          "name": "selectAuthError",
+          "kind": "fn",
+          "startLine": 136,
+          "endLine": 136,
+          "tokens": 17
+        },
+        {
+          "name": "selectIsSignedIn",
+          "kind": "fn",
+          "startLine": 137,
+          "endLine": 140,
+          "tokens": 31
+        }
+      ]
+    },
+    "src/store/authSlice.test.js": {
+      "description": "Mock every export: store/index.js pulls in the data slices, which import",
+      "tokens": 1546,
+      "hash": "e53b1b3808b67a2f",
+      "size": 5411,
+      "mtimeMs": 1787229542269.7378,
+      "updatedAt": "2026-08-20T12:58:12.931Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "readyStore",
+          "kind": "fn",
+          "startLine": 25,
+          "endLine": 156,
+          "tokens": 1326
+        }
+      ]
+    },
+    "src/store/categoriesSlice.js": {
+      "description": "Archiving is the normal way to retire a category: entries keep pointing at it,",
+      "tokens": 1419,
+      "hash": "312732ebc913f2b4",
+      "size": 4964,
+      "mtimeMs": 1787224450237.9712,
+      "updatedAt": "2026-08-20T12:58:12.931Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "byName",
+          "kind": "fn",
+          "startLine": 91,
+          "endLine": 146,
+          "tokens": 515
+        },
+        {
+          "name": "selectAllCategories",
+          "kind": "fn",
+          "startLine": 147,
+          "endLine": 147,
+          "tokens": 20
+        },
+        {
+          "name": "selectCategoriesStatus",
+          "kind": "fn",
+          "startLine": 148,
+          "endLine": 148,
+          "tokens": 21
+        },
+        {
+          "name": "selectCategoriesError",
+          "kind": "fn",
+          "startLine": 149,
+          "endLine": 152,
+          "tokens": 33
+        }
+      ]
+    },
+    "src/store/entriesSlice.js": {
+      "description": "Redux slice: entries",
+      "tokens": 1308,
+      "hash": "e5c5fdddb88428bf",
+      "size": 4575,
+      "mtimeMs": 1787224524082.6855,
+      "updatedAt": "2026-08-20T12:58:12.931Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "byDateDesc",
+          "kind": "fn",
+          "startLine": 78,
+          "endLine": 130,
+          "tokens": 497
+        },
+        {
+          "name": "selectAllEntries",
+          "kind": "fn",
+          "startLine": 131,
+          "endLine": 131,
+          "tokens": 18
+        },
+        {
+          "name": "selectEntriesStatus",
+          "kind": "fn",
+          "startLine": 132,
+          "endLine": 132,
+          "tokens": 20
+        },
+        {
+          "name": "selectEntriesError",
+          "kind": "fn",
+          "startLine": 133,
+          "endLine": 136,
+          "tokens": 30
+        }
+      ]
+    },
+    "src/store/goalsSlice.js": {
+      "description": "One goal per (category, period): re-saving the same pair updates the target",
+      "tokens": 944,
+      "hash": "49a3746a8e6e8ab5",
+      "size": 3302,
+      "mtimeMs": 1787224539145.1113,
+      "updatedAt": "2026-08-20T12:58:12.931Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "selectAllGoals",
+          "kind": "fn",
+          "startLine": 96,
+          "endLine": 96,
+          "tokens": 17
+        },
+        {
+          "name": "selectGoalsStatus",
+          "kind": "fn",
+          "startLine": 97,
+          "endLine": 97,
+          "tokens": 18
+        },
+        {
+          "name": "selectGoalsError",
+          "kind": "fn",
+          "startLine": 98,
+          "endLine": 101,
+          "tokens": 28
+        }
+      ]
+    },
+    "src/store/index.js": {
+      "description": "Factory so tests can build a store with preloaded state; the app itself uses",
+      "tokens": 469,
+      "hash": "b62a8bb21f90ae87",
+      "size": 1641,
+      "mtimeMs": 1787229400781.776,
+      "updatedAt": "2026-08-20T12:58:12.931Z",
+      "source": "scan"
+    },
+    "src/store/selectors.js": {
+      "description": "Entries whose entry_date falls inside an inclusive { from, to } range.",
+      "tokens": 1600,
+      "hash": "bd5c01c7985447df",
+      "size": 5600,
+      "mtimeMs": 1787224588234.779,
+      "updatedAt": "2026-08-20T12:58:12.931Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "filterByRange",
+          "kind": "fn",
+          "startLine": 13,
+          "endLine": 17,
+          "tokens": 45
+        },
+        {
+          "name": "sumMinutes",
+          "kind": "fn",
+          "startLine": 18,
+          "endLine": 22,
+          "tokens": 41
+        },
+        {
+          "name": "groupMinutesByCategory",
+          "kind": "fn",
+          "startLine": 23,
+          "endLine": 31,
+          "tokens": 74
+        },
+        {
+          "name": "groupMinutesByDate",
+          "kind": "fn",
+          "startLine": 32,
+          "endLine": 46,
+          "tokens": 136
+        },
+        {
+          "name": "computeGoalProgress",
+          "kind": "fn",
+          "startLine": 47,
+          "endLine": 86,
+          "tokens": 458
+        },
+        {
+          "name": "buildDailySeries",
+          "kind": "fn",
+          "startLine": 87,
+          "endLine": 136,
+          "tokens": 562
+        },
+        {
+          "name": "selectDataReady",
+          "kind": "fn",
+          "startLine": 137,
+          "endLine": 141,
+          "tokens": 48
+        },
+        {
+          "name": "selectAnyLoading",
+          "kind": "fn",
+          "startLine": 142,
+          "endLine": 146,
+          "tokens": 47
+        }
+      ]
+    },
+    "src/store/selectors.test.js": {
+      "description": "Declares REFERENCE",
+      "tokens": 1408,
+      "hash": "c887274d3b23d5b7",
+      "size": 4927,
+      "mtimeMs": 1787225135744.7058,
+      "updatedAt": "2026-08-20T12:58:12.931Z",
+      "source": "scan"
+    },
+    "src/test/auth.test.jsx": {
+      "description": "SIGNED_OUT",
+      "tokens": 1922,
+      "hash": "fe3bdf3d1277164a",
+      "size": 6724,
+      "mtimeMs": 1787229567496.9402,
+      "updatedAt": "2026-08-20T12:58:12.932Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "renderAuth",
+          "kind": "fn",
+          "startLine": 27,
+          "endLine": 42,
+          "tokens": 156
+        },
+        {
+          "name": "type",
+          "kind": "fn",
+          "startLine": 43,
+          "endLine": 193,
+          "tokens": 1521
+        }
+      ]
+    },
+    "src/test/pages.test.jsx": {
+      "description": "TEACHING",
+      "tokens": 1227,
+      "hash": "f8fc70ebe43ed335",
+      "size": 4294,
+      "mtimeMs": 1787225280876.8262,
+      "updatedAt": "2026-08-20T12:58:12.932Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "makeStore",
+          "kind": "fn",
+          "startLine": 36,
+          "endLine": 79,
+          "tokens": 305
+        },
+        {
+          "name": "renderPage",
+          "kind": "fn",
+          "startLine": 80,
+          "endLine": 137,
+          "tokens": 608
+        }
+      ]
+    },
+    "src/test/setup.js": {
+      "description": "",
+      "tokens": 13,
+      "hash": "91a3c8962a0edcb9",
+      "size": 43,
+      "mtimeMs": 1787225087412.6035,
+      "updatedAt": "2026-08-20T12:58:12.932Z",
+      "source": "scan"
+    },
+    "src/utils/duration.js": {
+      "description": "Parsing and formatting of human-typed durations.",
+      "tokens": 828,
+      "hash": "8c781fd8f21e365f",
+      "size": 2895,
+      "mtimeMs": 1787224384000.9866,
+      "updatedAt": "2026-08-20T12:58:12.932Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "parseDuration",
+          "kind": "fn",
+          "startLine": 26,
+          "endLine": 71,
+          "tokens": 429
+        },
+        {
+          "name": "formatDuration",
+          "kind": "fn",
+          "startLine": 72,
+          "endLine": 82,
+          "tokens": 92
+        },
+        {
+          "name": "toHours",
+          "kind": "fn",
+          "startLine": 83,
+          "endLine": 86,
+          "tokens": 29
+        }
+      ]
+    },
+    "src/utils/duration.test.js": {
+      "description": "Declares valid",
+      "tokens": 592,
+      "hash": "38ca09eea875f1fd",
+      "size": 2071,
+      "mtimeMs": 1787225087429.5212,
+      "updatedAt": "2026-08-20T12:58:12.932Z",
+      "source": "scan"
+    },
+    "src/utils/periods.js": {
+      "description": "Weeks run Monday -> Sunday.",
+      "tokens": 702,
+      "hash": "56d6312e727bd3c6",
+      "size": 2454,
+      "mtimeMs": 1787224384017.0151,
+      "updatedAt": "2026-08-20T12:58:12.932Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "toDateKey",
+          "kind": "fn",
+          "startLine": 30,
+          "endLine": 34,
+          "tokens": 35
+        },
+        {
+          "name": "fromDateKey",
+          "kind": "fn",
+          "startLine": 35,
+          "endLine": 38,
+          "tokens": 18
+        },
+        {
+          "name": "todayKey",
+          "kind": "fn",
+          "startLine": 39,
+          "endLine": 46,
+          "tokens": 66
+        },
+        {
+          "name": "currentPeriodRange",
+          "kind": "fn",
+          "startLine": 47,
+          "endLine": 66,
+          "tokens": 177
+        },
+        {
+          "name": "lastNDaysRange",
+          "kind": "fn",
+          "startLine": 67,
+          "endLine": 74,
+          "tokens": 70
+        },
+        {
+          "name": "eachDayKey",
+          "kind": "fn",
+          "startLine": 75,
+          "endLine": 82,
+          "tokens": 80
+        },
+        {
+          "name": "isWithinRange",
+          "kind": "fn",
+          "startLine": 83,
+          "endLine": 87,
+          "tokens": 38
+        },
+        {
+          "name": "formatDateKey",
+          "kind": "fn",
+          "startLine": 88,
+          "endLine": 92,
+          "tokens": 36
+        },
+        {
+          "name": "formatDateKeyShort",
+          "kind": "fn",
+          "startLine": 93,
+          "endLine": 96,
+          "tokens": 27
+        }
+      ]
+    },
+    "src/utils/periods.test.js": {
+      "description": "Declares REFERENCE",
+      "tokens": 924,
+      "hash": "8fbee37643832c7c",
+      "size": 3233,
+      "mtimeMs": 1787225111094.857,
+      "updatedAt": "2026-08-20T12:58:12.933Z",
+      "source": "scan"
+    },
+    "supabase/schema.sql": {
+      "description": "Database schema",
+      "tokens": 1083,
+      "hash": "1d4be51ed8fd9aef",
+      "size": 3790,
+      "mtimeMs": 1787224336838.5154,
+      "updatedAt": "2026-08-20T12:58:12.933Z",
+      "source": "scan"
+    },
+    "vite.config.js": {
+      "description": "Vite build configuration",
+      "tokens": 85,
+      "hash": "8a92abd6ce321d2c",
+      "size": 295,
+      "mtimeMs": 1787224321323.3586,
+      "updatedAt": "2026-08-20T12:58:12.933Z",
+      "source": "scan"
+    }
+  },
+  "preamble": [
+    "> Project structure index. Auto-maintained by OpenWolf hooks and daemon.",
+    "> Run `openwolf scan` to generate, or wait for the first Claude Code session.",
+    "> Status: Pending initial scan"
+  ]
+}

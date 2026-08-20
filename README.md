@@ -16,8 +16,13 @@ the current day / week / month is tracking.
 ### 1.1 Create the project
 
 1. Create a project at [supabase.com](https://supabase.com).
-2. Open **Project Settings -> API** and copy the **Project URL** and the
-   **anon public** key.
+2. Copy two values out of the dashboard -- they live on two different pages:
+   - **Project Settings -> Data API -> Project URL**, which is just
+     `https://<project-ref>.supabase.co` (`<project-ref>` is the id already in
+     the dashboard address bar).
+   - **Project Settings -> API Keys**, either the `anon` `public` JWT on the
+     **Legacy API keys** tab or the `sb_publishable_...` key on the **API keys**
+     tab. Both work; never use a secret / `service_role` key here.
 
 ### 1.2 Create the tables
 
@@ -71,12 +76,16 @@ npm run dev
 
 ```
 VITE_SUPABASE_URL=https://<your-project-ref>.supabase.co
-VITE_SUPABASE_ANON_KEY=<your anon public key>
+VITE_SUPABASE_ANON_KEY=<your anon public key, or sb_publishable_...>
 ```
 
 Vite only reads environment variables at startup, so restart the dev server
 after editing that file. Until it is filled in, the app shows a setup notice
 instead of the login screen.
+
+The key goes in the browser either way, which is the whole reason section 1.2's
+RLS policies matter. A secret key (`sb_secret_...` / `service_role`) must never
+go in this file -- it would ship to every visitor and bypass those policies.
 
 ## 3. Tests
 

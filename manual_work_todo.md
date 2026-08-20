@@ -20,3 +20,72 @@ Two things I could not verify myself, both needing your Supabase project: .env.l
 
 One honest consequence of skipping email confirmation, now recorded in the README: registering an address that already exists says so, so the sign-up form can be used to probe whether an email is registered. Sign-in can't. Turning off new signups once your accounts exist closes it.
 
+---
+
+## Manual steps
+
+### 1. Flip the one Supabase toggle
+
+**Authentication -> Sign In / Providers -> Email** -> **Confirm email: OFF**.
+That is the only required step; the Email provider is on by default.
+
+Worth ten more seconds on the same page:
+- raise **Minimum password length** from `6` to `10` (keep it in step with
+  `MIN_PASSWORD_LENGTH` in `src/components/AuthForm.jsx`) — this is the only
+  enforced floor, since anyone can call the auth endpoint directly;
+- confirm **Google** shows as disabled.
+
+Under **Authentication -> URL Configuration**: Site URL `http://localhost:5173`,
+Redirect URLs `http://localhost:5173/**`.
+
+### 2. Fill in `.env.local`
+
+`cp .env.example .env.local`, then paste the two values below. The Supabase
+dashboard splits them across **two different settings pages** — that is why the
+old "Project Settings -> API" instruction no longer matches anything.
+
+| Variable | Where in the dashboard | What it looks like |
+|---|---|---|
+| `VITE_SUPABASE_URL` | **Project Settings -> Data API -> Project URL** | `https://abcdefghijklmnop.supabase.co` |
+| `VITE_SUPABASE_ANON_KEY` | **Project Settings -> API Keys** | `eyJhbGciOi...` (very long) or `sb_publishable_...` |
+
+**The URL is not a key.** It is just `https://<project-ref>.supabase.co`, and
+`<project-ref>` is the ~20-character id already sitting in your browser's address
+bar while you are in the dashboard:
+`supabase.com/dashboard/project/`**`abcdefghijklmnop`**. The green **Connect**
+button at the top of the dashboard shows the same string. No trailing slash, and
+no `/rest/v1` on the end.
+
+**The key** is the long one. The API Keys page has two tabs and either tab's
+browser-safe key works with `@supabase/supabase-js` ^2.112:
+- **Legacy API keys** tab -> the row labelled `anon` `public` — the `eyJ...` JWT.
+  This is what the variable is named after.
+- **API keys** tab -> `sb_publishable_...` — the newer name for the same role.
+
+**Never paste a secret key** (`sb_secret_...`, or `service_role` on the legacy
+tab). Vite inlines every `VITE_*` variable into the JavaScript bundle it ships to
+the browser, and a secret key bypasses row level security entirely. The
+anon/publishable key being public is by design — the RLS policies in
+`supabase/schema.sql` are what keep one account's data away from another's.
+
+`.env.local` is gitignored, so real values are safe to paste in. Vite reads env
+vars only at startup: **restart `npm run dev` after editing the file.**
+
+Optional check that the two values are right, before starting the app — `200`
+means both are correct, `401` means the key is wrong, and a connection/DNS error
+means the URL is wrong:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" \
+  -H "apikey: <your anon key>" \
+  "https://<project-ref>.supabase.co/auth/v1/health"
+```
+
+### 3. Verify the round-trip
+
+- [ ] `npm run dev` shows the **login screen** instead of the setup notice, and
+      the "Supabase is not configured" console warning is gone.
+- [ ] Register an account and confirm you land in the app.
+- [ ] **Don't skip this one:** register a second account using a
+      `you+test@gmail.com` alias and confirm it sees an *empty* app. That is the
+      only real proof the RLS policies are live.
