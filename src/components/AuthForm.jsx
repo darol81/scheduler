@@ -1,8 +1,8 @@
-import { useEffect, useId, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, Navigate, useLocation } from 'react-router-dom';
-import ErrorBanner from './ErrorBanner';
-import Spinner from './Spinner';
+import { useEffect, useId, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link, Navigate, useLocation } from 'react-router-dom'
+import ErrorBanner from './ErrorBanner'
+import Spinner from './Spinner'
 import {
   clearAuthError,
   selectAuthError,
@@ -10,7 +10,7 @@ import {
   selectIsSignedIn,
   signInWithPassword,
   signUp,
-} from '../store/authSlice';
+} from '../store/authSlice'
 
 /**
  * Keep this at or above the "Minimum password length" set in the Supabase
@@ -21,13 +21,13 @@ import {
  * directly with the anon key from this page's source. The dashboard setting is
  * the only floor that is actually enforced.
  */
-export const MIN_PASSWORD_LENGTH = 10;
+export const MIN_PASSWORD_LENGTH = 10
 
 // Deliberately loose -- GoTrue is the real validator, this only catches typos.
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 // bcrypt truncates past 72 bytes, and GoTrue rejects longer input outright.
-const MAX_PASSWORD_LENGTH = 72;
+const MAX_PASSWORD_LENGTH = 72
 
 /**
  * The sign-in and register cards. One component, two routes: password managers
@@ -35,39 +35,39 @@ const MAX_PASSWORD_LENGTH = 72;
  * /login and /register stay distinct pages rather than a toggle.
  */
 export default function AuthForm({ mode }) {
-  const isSignUp = mode === 'signup';
+  const isSignUp = mode === 'signup'
 
-  const dispatch = useDispatch();
-  const location = useLocation();
-  const status = useSelector(selectAuthStatus);
-  const isSignedIn = useSelector(selectIsSignedIn);
-  const authError = useSelector(selectAuthError);
+  const dispatch = useDispatch()
+  const location = useLocation()
+  const status = useSelector(selectAuthStatus)
+  const isSignedIn = useSelector(selectIsSignedIn)
+  const authError = useSelector(selectAuthError)
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-  const [touched, setTouched] = useState({});
-  const [submitting, setSubmitting] = useState(false);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [touched, setTouched] = useState({})
+  const [submitting, setSubmitting] = useState(false)
 
-  const emailId = useId();
-  const passwordId = useId();
-  const confirmId = useId();
+  const emailId = useId()
+  const passwordId = useId()
+  const confirmId = useId()
 
   // Leaving an error behind would greet you on the other page.
-  useEffect(() => () => { dispatch(clearAuthError()); }, [dispatch]);
+  useEffect(() => () => { dispatch(clearAuthError()) }, [dispatch])
 
-  const trimmedEmail = email.trim();
+  const trimmedEmail = email.trim()
   const emailError = !trimmedEmail || EMAIL_PATTERN.test(trimmedEmail)
     ? null
-    : 'Enter a valid email address.';
+    : 'Enter a valid email address.'
   // Only the register form states the policy -- telling someone signing in that
   // their password is "too short" would leak the rule to whoever is guessing.
   const passwordError = isSignUp && password && password.length < MIN_PASSWORD_LENGTH
     ? `Use at least ${MIN_PASSWORD_LENGTH} characters.`
-    : null;
+    : null
   const confirmError = isSignUp && confirm && confirm !== password
     ? 'Passwords do not match.'
-    : null;
+    : null
 
   const canSubmit =
     Boolean(trimmedEmail) &&
@@ -76,27 +76,27 @@ export default function AuthForm({ mode }) {
     !emailError &&
     !passwordError &&
     !confirmError &&
-    !submitting;
+    !submitting
 
   // Hooks are all above this line -- the early returns below must stay last.
   if (status === 'loading') {
-    return <Spinner label="Checking your session" />;
+    return <Spinner label="Checking your session" />
   }
 
   if (isSignedIn) {
     // Where ProtectedRoute bounced us from, if anywhere. Only same-origin
     // paths: "//evil.com" is a protocol-relative URL, not a route.
-    const raw = location.state && location.state.from;
+    const raw = location.state && location.state.from
     const from =
-      typeof raw === 'string' && raw.startsWith('/') && !raw.startsWith('//') ? raw : '/';
-    return <Navigate to={from} replace />;
+      typeof raw === 'string' && raw.startsWith('/') && !raw.startsWith('//') ? raw : '/'
+    return <Navigate to={from} replace />
   }
 
   async function handleSubmit(event) {
-    event.preventDefault();
-    if (!canSubmit) return;
+    event.preventDefault()
+    if (!canSubmit) return
 
-    setSubmitting(true);
+    setSubmitting(true)
     try {
       await dispatch(
         (isSignUp ? signUp : signInWithPassword)({
@@ -105,28 +105,28 @@ export default function AuthForm({ mode }) {
           email: trimmedEmail.toLowerCase(),
           password,
         }),
-      ).unwrap();
+      ).unwrap()
       // Nothing to do on success: onAuthStateChange updates the store, this
       // re-renders, and the isSignedIn branch above navigates. Doing it
       // declaratively avoids racing useNavigate against the store update.
     } catch {
       // The slice already holds the friendly message; ErrorBanner shows it.
-      setPassword('');
-      setConfirm('');
+      setPassword('')
+      setConfirm('')
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
   }
 
   function markTouched(field) {
-    setTouched((previous) => ({ ...previous, [field]: true }));
+    setTouched((previous) => ({ ...previous, [field]: true }))
   }
 
   // Hold back the red until the field has been left, so the rules do not shout
   // at someone halfway through typing.
-  const visibleEmailError = touched.email ? emailError : null;
-  const visiblePasswordError = touched.password ? passwordError : null;
-  const visibleConfirmError = touched.confirm ? confirmError : null;
+  const visibleEmailError = touched.email ? emailError : null
+  const visiblePasswordError = touched.password ? passwordError : null
+  const visibleConfirmError = touched.confirm ? confirmError : null
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
@@ -254,5 +254,5 @@ export default function AuthForm({ mode }) {
         </p>
       </div>
     </div>
-  );
+  )
 }

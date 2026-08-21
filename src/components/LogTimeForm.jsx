@@ -1,66 +1,66 @@
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import CategorySelect from './CategorySelect';
-import DurationInput from './DurationInput';
-import ErrorBanner from './ErrorBanner';
-import { addEntry } from '../store/entriesSlice';
-import { formatDuration } from '../utils/duration';
-import { todayKey } from '../utils/periods';
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import CategorySelect from './CategorySelect'
+import DurationInput from './DurationInput'
+import ErrorBanner from './ErrorBanner'
+import { addEntry } from '../store/entriesSlice'
+import { formatDuration } from '../utils/duration'
+import { todayKey } from '../utils/periods'
 
-const LAST_CATEGORY_KEY = 'worktime:lastCategoryId';
+const LAST_CATEGORY_KEY = 'worktime:lastCategoryId'
 
 /**
  * The main way time gets into the app: pick a category and a day, then type how
  * long it took. No timers -- entries are always recorded after the fact.
  */
 export default function LogTimeForm({ categories }) {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  const [categoryId, setCategoryId] = useState('');
-  const [entryDate, setEntryDate] = useState(todayKey());
-  const [duration, setDuration] = useState({ text: '', minutes: null, error: null });
-  const [note, setNote] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const [saved, setSaved] = useState(null);
+  const [categoryId, setCategoryId] = useState('')
+  const [entryDate, setEntryDate] = useState(todayKey())
+  const [duration, setDuration] = useState({ text: '', minutes: null, error: null })
+  const [note, setNote] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState(null)
+  const [saved, setSaved] = useState(null)
 
   // Default to whatever was logged last -- most sessions are the same category.
   useEffect(() => {
-    if (categoryId || categories.length === 0) return;
-    const remembered = window.localStorage.getItem(LAST_CATEGORY_KEY);
-    const exists = categories.some((category) => category.id === remembered);
-    setCategoryId(exists ? remembered : categories[0].id);
-  }, [categories, categoryId]);
+    if (categoryId || categories.length === 0) return
+    const remembered = window.localStorage.getItem(LAST_CATEGORY_KEY)
+    const exists = categories.some((category) => category.id === remembered)
+    setCategoryId(exists ? remembered : categories[0].id)
+  }, [categories, categoryId])
 
   // Clear the "saved" confirmation after a moment.
   useEffect(() => {
-    if (!saved) return undefined;
-    const timer = window.setTimeout(() => setSaved(null), 4000);
-    return () => window.clearTimeout(timer);
-  }, [saved]);
+    if (!saved) return undefined
+    const timer = window.setTimeout(() => setSaved(null), 4000)
+    return () => window.clearTimeout(timer)
+  }, [saved])
 
-  const canSubmit = Boolean(categoryId) && Boolean(duration.minutes) && Boolean(entryDate) && !saving;
+  const canSubmit = Boolean(categoryId) && Boolean(duration.minutes) && Boolean(entryDate) && !saving
 
   async function handleSubmit(event) {
-    event.preventDefault();
-    if (!canSubmit) return;
+    event.preventDefault()
+    if (!canSubmit) return
 
-    setSaving(true);
-    setError(null);
+    setSaving(true)
+    setError(null)
     try {
       await dispatch(
         addEntry({ categoryId, entryDate, minutes: duration.minutes, note }),
-      ).unwrap();
+      ).unwrap()
 
-      window.localStorage.setItem(LAST_CATEGORY_KEY, categoryId);
-      setSaved(duration.minutes);
+      window.localStorage.setItem(LAST_CATEGORY_KEY, categoryId)
+      setSaved(duration.minutes)
       // Keep category and date: logging several sessions for one day is common.
-      setDuration({ text: '', minutes: null, error: null });
-      setNote('');
+      setDuration({ text: '', minutes: null, error: null })
+      setNote('')
     } catch (err) {
-      setError(typeof err === 'string' ? err : 'Could not save the entry.');
+      setError(typeof err === 'string' ? err : 'Could not save the entry.')
     } finally {
-      setSaving(false);
+      setSaving(false)
     }
   }
 
@@ -116,5 +116,5 @@ export default function LogTimeForm({ categories }) {
         ) : null}
       </div>
     </form>
-  );
+  )
 }

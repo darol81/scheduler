@@ -1,18 +1,18 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { supabase, requireUserId } from '../lib/supabaseClient';
-import { friendlyError } from '../lib/errors';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { supabase, requireUserId } from '../lib/supabaseClient'
+import { friendlyError } from '../lib/errors'
 
 const initialState = {
   items: [],
   status: 'idle',
   error: null,
-};
+}
 
 export const fetchGoals = createAsyncThunk('goals/fetch', async (_, { rejectWithValue }) => {
-  const { data, error } = await supabase.from('goals').select('*');
-  if (error) return rejectWithValue(friendlyError(error, 'Could not load goals.'));
-  return data;
-});
+  const { data, error } = await supabase.from('goals').select('*')
+  if (error) return rejectWithValue(friendlyError(error, 'Could not load goals.'))
+  return data
+})
 
 /**
  * One goal per (category, period): re-saving the same pair updates the target
@@ -22,7 +22,7 @@ export const upsertGoal = createAsyncThunk(
   'goals/upsert',
   async ({ categoryId, period, targetMinutes }, { rejectWithValue }) => {
     try {
-      const userId = await requireUserId();
+      const userId = await requireUserId()
       const { data, error } = await supabase
         .from('goals')
         .upsert(
@@ -35,66 +35,66 @@ export const upsertGoal = createAsyncThunk(
           { onConflict: 'user_id,category_id,period' },
         )
         .select()
-        .single();
-      if (error) return rejectWithValue(friendlyError(error, 'Could not save the goal.'));
-      return data;
+        .single()
+      if (error) return rejectWithValue(friendlyError(error, 'Could not save the goal.'))
+      return data
     } catch (err) {
-      return rejectWithValue(friendlyError(err, 'Could not save the goal.'));
+      return rejectWithValue(friendlyError(err, 'Could not save the goal.'))
     }
   },
-);
+)
 
 export const deleteGoal = createAsyncThunk('goals/delete', async (id, { rejectWithValue }) => {
-  const { error } = await supabase.from('goals').delete().eq('id', id);
-  if (error) return rejectWithValue(friendlyError(error, 'Could not delete the goal.'));
-  return id;
-});
+  const { error } = await supabase.from('goals').delete().eq('id', id)
+  if (error) return rejectWithValue(friendlyError(error, 'Could not delete the goal.'))
+  return id
+})
 
 const goalsSlice = createSlice({
   name: 'goals',
   initialState,
   reducers: {
     clearGoalsError(state) {
-      state.error = null;
+      state.error = null
     },
     goalsReset() {
-      return initialState;
+      return initialState
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchGoals.pending, (state) => {
-        state.status = 'loading';
-        state.error = null;
+        state.status = 'loading'
+        state.error = null
       })
       .addCase(fetchGoals.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.items = action.payload;
+        state.status = 'succeeded'
+        state.items = action.payload
       })
       .addCase(upsertGoal.fulfilled, (state, action) => {
-        const index = state.items.findIndex((g) => g.id === action.payload.id);
-        if (index === -1) state.items.push(action.payload);
-        else state.items[index] = action.payload;
-        state.error = null;
+        const index = state.items.findIndex((g) => g.id === action.payload.id)
+        if (index === -1) state.items.push(action.payload)
+        else state.items[index] = action.payload
+        state.error = null
       })
       .addCase(deleteGoal.fulfilled, (state, action) => {
-        state.items = state.items.filter((g) => g.id !== action.payload);
-        state.error = null;
+        state.items = state.items.filter((g) => g.id !== action.payload)
+        state.error = null
       })
       .addMatcher(
         (action) => action.type.startsWith('goals/') && action.type.endsWith('/rejected'),
         (state, action) => {
-          if (state.status === 'loading') state.status = 'failed';
-          state.error = action.payload || (action.error && action.error.message) || 'Something went wrong.';
+          if (state.status === 'loading') state.status = 'failed'
+          state.error = action.payload || (action.error && action.error.message) || 'Something went wrong.'
         },
-      );
+      )
   },
-});
+})
 
-export const { clearGoalsError, goalsReset } = goalsSlice.actions;
+export const { clearGoalsError, goalsReset } = goalsSlice.actions
 
-export const selectAllGoals = (state) => state.goals.items;
-export const selectGoalsStatus = (state) => state.goals.status;
-export const selectGoalsError = (state) => state.goals.error;
+export const selectAllGoals = (state) => state.goals.items
+export const selectGoalsStatus = (state) => state.goals.status
+export const selectGoalsError = (state) => state.goals.error
 
-export default goalsSlice.reducer;
+export default goalsSlice.reducer

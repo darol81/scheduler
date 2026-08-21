@@ -1,16 +1,16 @@
-import { useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
-import CategoryDot from '../components/CategoryDot';
-import EmptyState from '../components/EmptyState';
-import ErrorBanner from '../components/ErrorBanner';
-import GoalProgressBar from '../components/GoalProgressBar';
-import LogTimeForm from '../components/LogTimeForm';
-import Spinner from '../components/Spinner';
+import CategoryDot from '../components/CategoryDot'
+import EmptyState from '../components/EmptyState'
+import ErrorBanner from '../components/ErrorBanner'
+import GoalProgressBar from '../components/GoalProgressBar'
+import LogTimeForm from '../components/LogTimeForm'
+import Spinner from '../components/Spinner'
 
-import { clearEntriesError, selectAllEntries, selectEntriesError } from '../store/entriesSlice';
-import { selectCategoriesError, selectCategoriesStatus } from '../store/categoriesSlice';
+import { clearEntriesError, selectAllEntries, selectEntriesError } from '../store/entriesSlice'
+import { selectCategoriesError, selectCategoriesStatus } from '../store/categoriesSlice'
 import {
   filterByRange,
   groupMinutesByCategory,
@@ -19,9 +19,9 @@ import {
   selectEntriesWithCategory,
   selectGoalProgress,
   sumMinutes,
-} from '../store/selectors';
-import { formatDuration } from '../utils/duration';
-import { currentPeriodRange, formatDateKey } from '../utils/periods';
+} from '../store/selectors'
+import { formatDuration } from '../utils/duration'
+import { currentPeriodRange, formatDateKey } from '../utils/periods'
 
 function StatCard({ label, value, sub }) {
   return (
@@ -30,43 +30,43 @@ function StatCard({ label, value, sub }) {
       <p className="mt-2 text-2xl font-semibold text-slate-900">{value}</p>
       {sub ? <p className="mt-1 text-sm text-slate-500">{sub}</p> : null}
     </div>
-  );
+  )
 }
 
 export default function DashboardPage() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  const categories = useSelector(selectActiveCategories);
-  const categoryMap = useSelector(selectCategoryMap);
-  const categoriesStatus = useSelector(selectCategoriesStatus);
-  const categoriesError = useSelector(selectCategoriesError);
-  const entries = useSelector(selectAllEntries);
-  const entriesError = useSelector(selectEntriesError);
-  const entriesWithCategory = useSelector(selectEntriesWithCategory);
-  const goalProgress = useSelector(selectGoalProgress);
+  const categories = useSelector(selectActiveCategories)
+  const categoryMap = useSelector(selectCategoryMap)
+  const categoriesStatus = useSelector(selectCategoriesStatus)
+  const categoriesError = useSelector(selectCategoriesError)
+  const entries = useSelector(selectAllEntries)
+  const entriesError = useSelector(selectEntriesError)
+  const entriesWithCategory = useSelector(selectEntriesWithCategory)
+  const goalProgress = useSelector(selectGoalProgress)
 
-  const todayRange = useMemo(() => currentPeriodRange('daily'), []);
-  const weekRange = useMemo(() => currentPeriodRange('weekly'), []);
+  const todayRange = useMemo(() => currentPeriodRange('daily'), [])
+  const weekRange = useMemo(() => currentPeriodRange('weekly'), [])
 
   const todayMinutes = useMemo(
     () => sumMinutes(filterByRange(entries, todayRange)),
     [entries, todayRange],
-  );
-  const weekEntries = useMemo(() => filterByRange(entries, weekRange), [entries, weekRange]);
-  const weekMinutes = useMemo(() => sumMinutes(weekEntries), [weekEntries]);
+  )
+  const weekEntries = useMemo(() => filterByRange(entries, weekRange), [entries, weekRange])
+  const weekMinutes = useMemo(() => sumMinutes(weekEntries), [weekEntries])
 
   const weekByCategory = useMemo(() => {
-    const totals = groupMinutesByCategory(weekEntries);
+    const totals = groupMinutesByCategory(weekEntries)
     return Object.entries(totals)
       .map(([categoryId, minutes]) => ({ category: categoryMap[categoryId], minutes }))
       .filter((row) => row.category)
-      .sort((a, b) => b.minutes - a.minutes);
-  }, [weekEntries, categoryMap]);
+      .sort((a, b) => b.minutes - a.minutes)
+  }, [weekEntries, categoryMap])
 
-  const recentEntries = useMemo(() => entriesWithCategory.slice(0, 8), [entriesWithCategory]);
+  const recentEntries = useMemo(() => entriesWithCategory.slice(0, 8), [entriesWithCategory])
 
   if (categoriesStatus === 'loading' || categoriesStatus === 'idle') {
-    return <Spinner label="Loading your data" />;
+    return <Spinner label="Loading your data" />
   }
 
   if (categories.length === 0) {
@@ -83,10 +83,10 @@ export default function DashboardPage() {
           }
         />
       </div>
-    );
+    )
   }
 
-  const goalsMet = goalProgress.filter((progress) => progress.met).length;
+  const goalsMet = goalProgress.filter((progress) => progress.met).length
 
   return (
     <div className="space-y-6">
@@ -202,5 +202,5 @@ export default function DashboardPage() {
         )}
       </section>
     </div>
-  );
+  )
 }

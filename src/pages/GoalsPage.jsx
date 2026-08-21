@@ -1,43 +1,43 @@
-import { useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
-import CategorySelect from '../components/CategorySelect';
-import DurationInput from '../components/DurationInput';
-import EmptyState from '../components/EmptyState';
-import ErrorBanner from '../components/ErrorBanner';
-import GoalProgressBar from '../components/GoalProgressBar';
-import Spinner from '../components/Spinner';
+import CategorySelect from '../components/CategorySelect'
+import DurationInput from '../components/DurationInput'
+import EmptyState from '../components/EmptyState'
+import ErrorBanner from '../components/ErrorBanner'
+import GoalProgressBar from '../components/GoalProgressBar'
+import Spinner from '../components/Spinner'
 
-import { clearGoalsError, deleteGoal, selectGoalsError, selectGoalsStatus, upsertGoal } from '../store/goalsSlice';
-import { selectActiveCategories, selectGoalProgress } from '../store/selectors';
-import { MAX_GOAL_MINUTES, formatDuration } from '../utils/duration';
-import { PERIODS, PERIOD_LABELS } from '../utils/periods';
+import { clearGoalsError, deleteGoal, selectGoalsError, selectGoalsStatus, upsertGoal } from '../store/goalsSlice'
+import { selectActiveCategories, selectGoalProgress } from '../store/selectors'
+import { MAX_GOAL_MINUTES, formatDuration } from '../utils/duration'
+import { PERIODS, PERIOD_LABELS } from '../utils/periods'
 
 function NewGoalForm({ categories, existingGoals }) {
-  const dispatch = useDispatch();
-  const [categoryId, setCategoryId] = useState('');
-  const [period, setPeriod] = useState('weekly');
-  const [duration, setDuration] = useState({ text: '', minutes: null, error: null });
-  const [saving, setSaving] = useState(false);
+  const dispatch = useDispatch()
+  const [categoryId, setCategoryId] = useState('')
+  const [period, setPeriod] = useState('weekly')
+  const [duration, setDuration] = useState({ text: '', minutes: null, error: null })
+  const [saving, setSaving] = useState(false)
 
   // Saving over an existing (category, period) pair replaces its target, so say so.
   const replaces = existingGoals.some(
     (goal) => goal.category_id === categoryId && goal.period === period,
-  );
+  )
 
-  const canSubmit = Boolean(categoryId) && Boolean(duration.minutes) && !saving;
+  const canSubmit = Boolean(categoryId) && Boolean(duration.minutes) && !saving
 
   async function handleSubmit(event) {
-    event.preventDefault();
-    if (!canSubmit) return;
-    setSaving(true);
+    event.preventDefault()
+    if (!canSubmit) return
+    setSaving(true)
     const action = await dispatch(
       upsertGoal({ categoryId, period, targetMinutes: duration.minutes }),
-    );
-    setSaving(false);
+    )
+    setSaving(false)
     if (!action.type.endsWith('/rejected')) {
-      setDuration({ text: '', minutes: null, error: null });
+      setDuration({ text: '', minutes: null, error: null })
     }
   }
 
@@ -86,32 +86,32 @@ function NewGoalForm({ categories, existingGoals }) {
         ) : null}
       </div>
     </form>
-  );
+  )
 }
 
 function GoalRow({ progress }) {
-  const dispatch = useDispatch();
-  const [editing, setEditing] = useState(false);
+  const dispatch = useDispatch()
+  const [editing, setEditing] = useState(false)
   const [duration, setDuration] = useState({
     text: formatDuration(progress.goal.target_minutes),
     minutes: progress.goal.target_minutes,
     error: null,
-  });
-  const [saving, setSaving] = useState(false);
+  })
+  const [saving, setSaving] = useState(false)
 
   async function handleSave(event) {
-    event.preventDefault();
-    if (!duration.minutes) return;
-    setSaving(true);
+    event.preventDefault()
+    if (!duration.minutes) return
+    setSaving(true)
     const action = await dispatch(
       upsertGoal({
         categoryId: progress.goal.category_id,
         period: progress.goal.period,
         targetMinutes: duration.minutes,
       }),
-    );
-    setSaving(false);
-    if (!action.type.endsWith('/rejected')) setEditing(false);
+    )
+    setSaving(false)
+    if (!action.type.endsWith('/rejected')) setEditing(false)
   }
 
   return (
@@ -146,28 +146,28 @@ function GoalRow({ progress }) {
         </form>
       ) : null}
     </li>
-  );
+  )
 }
 
 export default function GoalsPage() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  const categories = useSelector(selectActiveCategories);
-  const goalProgress = useSelector(selectGoalProgress);
-  const status = useSelector(selectGoalsStatus);
-  const error = useSelector(selectGoalsError);
+  const categories = useSelector(selectActiveCategories)
+  const goalProgress = useSelector(selectGoalProgress)
+  const status = useSelector(selectGoalsStatus)
+  const error = useSelector(selectGoalsError)
 
-  const existingGoals = useMemo(() => goalProgress.map((progress) => progress.goal), [goalProgress]);
+  const existingGoals = useMemo(() => goalProgress.map((progress) => progress.goal), [goalProgress])
 
   const byPeriod = useMemo(() => {
-    const groups = {};
-    for (const period of PERIODS) groups[period] = [];
-    for (const progress of goalProgress) groups[progress.goal.period].push(progress);
-    return groups;
-  }, [goalProgress]);
+    const groups = {}
+    for (const period of PERIODS) groups[period] = []
+    for (const progress of goalProgress) groups[progress.goal.period].push(progress)
+    return groups
+  }, [goalProgress])
 
   if (status === 'loading' || status === 'idle') {
-    return <Spinner label="Loading goals" />;
+    return <Spinner label="Loading goals" />
   }
 
   if (categories.length === 0) {
@@ -181,7 +181,7 @@ export default function GoalsPage() {
           </Link>
         }
       />
-    );
+    )
   }
 
   return (
@@ -208,5 +208,5 @@ export default function GoalsPage() {
         ))
       )}
     </div>
-  );
+  )
 }

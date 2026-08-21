@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { MAX_GOAL_MINUTES, formatDuration, parseDuration, toHours } from './duration';
+import { describe, expect, it } from 'vitest'
+import { MAX_GOAL_MINUTES, formatDuration, parseDuration, toHours } from './duration'
 
 describe('parseDuration', () => {
   const valid = [
@@ -19,34 +19,34 @@ describe('parseDuration', () => {
     ['  45  ', 45],
     ['3 hours', 180],
     ['1 hour 5 minutes', 65],
-  ];
+  ]
 
   it.each(valid)('parses %s as %i minutes', (input, expected) => {
-    expect(parseDuration(input)).toEqual({ minutes: expected });
-  });
+    expect(parseDuration(input)).toEqual({ minutes: expected })
+  })
 
-  const invalid = ['', '   ', '0', '-5', 'abc', '1h 70min', '1.5', 'h', 'min', '1h 20min 30s'];
+  const invalid = ['', '   ', '0', '-5', 'abc', '1h 70min', '1.5', 'h', 'min', '1h 20min 30s']
 
   it.each(invalid)('rejects %s', (input) => {
-    const result = parseDuration(input);
-    expect(result.minutes).toBeUndefined();
-    expect(typeof result.error).toBe('string');
-  });
+    const result = parseDuration(input)
+    expect(result.minutes).toBeUndefined()
+    expect(typeof result.error).toBe('string')
+  })
 
   it('rejects null and undefined', () => {
-    expect(parseDuration(null).error).toBeTruthy();
-    expect(parseDuration(undefined).error).toBeTruthy();
-  });
+    expect(parseDuration(null).error).toBeTruthy()
+    expect(parseDuration(undefined).error).toBeTruthy()
+  })
 
   it('caps a single entry at 24h by default', () => {
-    expect(parseDuration('24h')).toEqual({ minutes: 1440 });
-    expect(parseDuration('25h').error).toBeTruthy();
-  });
+    expect(parseDuration('24h')).toEqual({ minutes: 1440 })
+    expect(parseDuration('25h').error).toBeTruthy()
+  })
 
   it('allows a bigger ceiling for goals', () => {
-    expect(parseDuration('40h', { maxMinutes: MAX_GOAL_MINUTES })).toEqual({ minutes: 2400 });
-  });
-});
+    expect(parseDuration('40h', { maxMinutes: MAX_GOAL_MINUTES })).toEqual({ minutes: 2400 })
+  })
+})
 
 describe('formatDuration', () => {
   it.each([
@@ -57,20 +57,20 @@ describe('formatDuration', () => {
     [120, '2h'],
     [1440, '24h'],
   ])('formats %i as %s', (minutes, expected) => {
-    expect(formatDuration(minutes)).toBe(expected);
-  });
+    expect(formatDuration(minutes)).toBe(expected)
+  })
 
   it('round-trips through parseDuration', () => {
     for (const minutes of [5, 59, 60, 61, 125, 480]) {
-      expect(parseDuration(formatDuration(minutes))).toEqual({ minutes });
+      expect(parseDuration(formatDuration(minutes))).toEqual({ minutes })
     }
-  });
-});
+  })
+})
 
 describe('toHours', () => {
   it('converts to one decimal place', () => {
-    expect(toHours(80)).toBe(1.3);
-    expect(toHours(120)).toBe(2);
-    expect(toHours(0)).toBe(0);
-  });
-});
+    expect(toHours(80)).toBe(1.3)
+    expect(toHours(120)).toBe(2)
+    expect(toHours(0)).toBe(0)
+  })
+})

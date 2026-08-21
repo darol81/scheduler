@@ -5,5 +5,5 @@ export default function CategoryDot({ color, size = 10 }) {
       style={{ backgroundColor: color || '#94a3b8', width: size, height: size }}
       aria-hidden="true"
     />
-  );
+  )
 }

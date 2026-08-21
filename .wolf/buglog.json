@@ -1,4 +1,18 @@
 {
   "version": 1,
-  "bugs": []
+  "bugs": [
+    {
+      "date": "2026-08-21",
+      "error_message": "Error: Cannot find package '@testing-library/dom' imported from node_modules/@testing-library/jest-dom/dist/matchers-*.mjs (all 8 vitest suites failed to load)",
+      "root_cause": "Installing eslint-plugin-react with --legacy-peer-deps (its peer range caps at eslint ^9.7, project has eslint 10) made npm re-resolve the tree without auto-installed peer deps, silently dropping @testing-library/dom, a peer of @testing-library/jest-dom.",
+      "fix": "Dropped eslint-plugin-react entirely (ESLint 10's core no-unused-vars is already JSX-aware, verified with a probe file), then ran a plain `npm install` to restore the tree. 106/106 tests pass.",
+      "tags": [
+        "npm",
+        "peer-deps",
+        "eslint",
+        "vitest",
+        "testing-library"
+      ]
+    }
+  ]
 }

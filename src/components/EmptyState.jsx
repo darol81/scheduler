@@ -5,5 +5,5 @@ export default function EmptyState({ title, description, action }) {
       {description ? <p className="mt-1 text-sm text-slate-500">{description}</p> : null}
       {action ? <div className="mt-4 flex justify-center">{action}</div> : null}
     </div>
-  );
+  )
 }

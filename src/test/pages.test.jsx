@@ -1,14 +1,14 @@
-import { render, screen, within } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { render, screen, within } from '@testing-library/react'
+import { Provider } from 'react-redux'
+import { MemoryRouter } from 'react-router-dom'
+import { describe, expect, it } from 'vitest'
 
-import { createAppStore } from '../store';
-import CategoriesPage from '../pages/CategoriesPage';
-import DashboardPage from '../pages/DashboardPage';
-import EntriesPage from '../pages/EntriesPage';
-import GoalsPage from '../pages/GoalsPage';
-import ReportsPage from '../pages/ReportsPage';
+import { createAppStore } from '../store'
+import CategoriesPage from '../pages/CategoriesPage'
+import DashboardPage from '../pages/DashboardPage'
+import EntriesPage from '../pages/EntriesPage'
+import GoalsPage from '../pages/GoalsPage'
+import ReportsPage from '../pages/ReportsPage'
 
 const TEACHING = {
   id: 'cat-teaching',
@@ -16,22 +16,22 @@ const TEACHING = {
   name: 'Teaching',
   color: '#4f46e5',
   archived: false,
-};
+}
 const STUDYING = {
   id: 'cat-studying',
   user_id: 'u1',
   name: 'Studying',
   color: '#0891b2',
   archived: false,
-};
+}
 
 // Today, so the entries land inside every current period.
-const today = new Date();
+const today = new Date()
 const todayKey = [
   today.getFullYear(),
   String(today.getMonth() + 1).padStart(2, '0'),
   String(today.getDate()).padStart(2, '0'),
-].join('-');
+].join('-')
 
 function makeStore() {
   return createAppStore({
@@ -74,7 +74,7 @@ function makeStore() {
       status: 'succeeded',
       error: null,
     },
-  });
+  })
 }
 
 function renderPage(ui) {
@@ -82,55 +82,55 @@ function renderPage(ui) {
     <Provider store={makeStore()}>
       <MemoryRouter>{ui}</MemoryRouter>
     </Provider>,
-  );
+  )
 }
 
 describe('pages render with real data', () => {
   it('dashboard shows the log form, totals and goal progress', () => {
-    renderPage(<DashboardPage />);
+    renderPage(<DashboardPage />)
 
-    expect(screen.getByRole('button', { name: 'Add entry' })).toBeInTheDocument();
-    expect(screen.getByLabelText('Duration')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Add entry' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Duration')).toBeInTheDocument()
 
     // 80 + 45 logged today and this week.
-    expect(screen.getAllByText('2h 5min').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('2h 5min').length).toBeGreaterThan(0)
     // The weekly teaching goal: 1h 20min of 10h.
-    expect(screen.getByText('1h 20min / 10h')).toBeInTheDocument();
-    expect(screen.getByText(/13%/)).toBeInTheDocument();
-  });
+    expect(screen.getByText('1h 20min / 10h')).toBeInTheDocument()
+    expect(screen.getByText(/13%/)).toBeInTheDocument()
+  })
 
   it('entries page lists the entries and their total', () => {
-    renderPage(<EntriesPage />);
+    renderPage(<EntriesPage />)
 
-    expect(screen.getByText('Lecture prep')).toBeInTheDocument();
-    const table = screen.getByRole('table');
-    expect(within(table).getByText('1h 20min')).toBeInTheDocument();
-    expect(within(table).getByText('45min')).toBeInTheDocument();
-    expect(screen.getByText('2 entries')).toBeInTheDocument();
-  });
+    expect(screen.getByText('Lecture prep')).toBeInTheDocument()
+    const table = screen.getByRole('table')
+    expect(within(table).getByText('1h 20min')).toBeInTheDocument()
+    expect(within(table).getByText('45min')).toBeInTheDocument()
+    expect(screen.getByText('2 entries')).toBeInTheDocument()
+  })
 
   it('goals page shows the existing goal', () => {
-    renderPage(<GoalsPage />);
+    renderPage(<GoalsPage />)
 
-    expect(screen.getByText('Weekly goals')).toBeInTheDocument();
-    expect(screen.getByText('1h 20min / 10h')).toBeInTheDocument();
-  });
+    expect(screen.getByText('Weekly goals')).toBeInTheDocument()
+    expect(screen.getByText('1h 20min / 10h')).toBeInTheDocument()
+  })
 
   it('reports page totals the range and lists each category', () => {
-    renderPage(<ReportsPage />);
+    renderPage(<ReportsPage />)
 
-    expect(screen.getByText('Time per category')).toBeInTheDocument();
-    expect(screen.getByText('Day by day')).toBeInTheDocument();
+    expect(screen.getByText('Time per category')).toBeInTheDocument()
+    expect(screen.getByText('Day by day')).toBeInTheDocument()
     // 1h 20min teaching (64%) + 45min studying (36%) this month.
-    expect(screen.getByText('64%')).toBeInTheDocument();
-    expect(screen.getByText('36%')).toBeInTheDocument();
-  });
+    expect(screen.getByText('64%')).toBeInTheDocument()
+    expect(screen.getByText('36%')).toBeInTheDocument()
+  })
 
   it('categories page lists categories with their logged totals', () => {
-    renderPage(<CategoriesPage />);
+    renderPage(<CategoriesPage />)
 
-    expect(screen.getByText('Teaching')).toBeInTheDocument();
-    expect(screen.getByText('1h 20min logged')).toBeInTheDocument();
-    expect(screen.getByText('45min logged')).toBeInTheDocument();
-  });
-});
+    expect(screen.getByText('Teaching')).toBeInTheDocument()
+    expect(screen.getByText('1h 20min logged')).toBeInTheDocument()
+    expect(screen.getByText('45min logged')).toBeInTheDocument()
+  })
+})

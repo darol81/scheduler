@@ -15,10 +15,10 @@ export const CATEGORY_COLORS = [
   '#0f766e', // teal
   '#7c3aed', // violet
   '#64748b', // slate
-];
+]
 
 /** Next unused colour, so new categories do not all look the same. */
 export function suggestColor(existingCategories) {
-  const used = new Set(existingCategories.map((category) => category.color));
-  return CATEGORY_COLORS.find((color) => !used.has(color)) || CATEGORY_COLORS[0];
+  const used = new Set(existingCategories.map((category) => category.color))
+  return CATEGORY_COLORS.find((color) => !used.has(color)) || CATEGORY_COLORS[0]
 }

@@ -1,12 +1,12 @@
-import { useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
-import CategoryDot from '../components/CategoryDot';
-import CategorySelect from '../components/CategorySelect';
-import DurationInput from '../components/DurationInput';
-import EmptyState from '../components/EmptyState';
-import ErrorBanner from '../components/ErrorBanner';
-import Spinner from '../components/Spinner';
+import CategoryDot from '../components/CategoryDot'
+import CategorySelect from '../components/CategorySelect'
+import DurationInput from '../components/DurationInput'
+import EmptyState from '../components/EmptyState'
+import ErrorBanner from '../components/ErrorBanner'
+import Spinner from '../components/Spinner'
 
 import {
   clearEntriesError,
@@ -14,44 +14,44 @@ import {
   selectEntriesError,
   selectEntriesStatus,
   updateEntry,
-} from '../store/entriesSlice';
-import { filterByRange, selectEntriesWithCategory, sumMinutes } from '../store/selectors';
-import { selectAllCategories } from '../store/categoriesSlice';
-import { formatDuration } from '../utils/duration';
-import { currentPeriodRange, formatDateKey, lastNDaysRange, todayKey } from '../utils/periods';
+} from '../store/entriesSlice'
+import { filterByRange, selectEntriesWithCategory, sumMinutes } from '../store/selectors'
+import { selectAllCategories } from '../store/categoriesSlice'
+import { formatDuration } from '../utils/duration'
+import { currentPeriodRange, formatDateKey, lastNDaysRange, todayKey } from '../utils/periods'
 
 const PRESETS = [
   { key: 'week', label: 'This week', build: () => currentPeriodRange('weekly') },
   { key: 'month', label: 'This month', build: () => currentPeriodRange('monthly') },
   { key: 'last30', label: 'Last 30 days', build: () => lastNDaysRange(30) },
   { key: 'all', label: 'All time', build: () => ({ from: '0000-01-01', to: '9999-12-31' }) },
-];
+]
 
 function EntryRow({ entry, categories, onSaved }) {
-  const dispatch = useDispatch();
-  const [editing, setEditing] = useState(false);
-  const [categoryId, setCategoryId] = useState(entry.category_id);
-  const [entryDate, setEntryDate] = useState(entry.entry_date);
-  const [note, setNote] = useState(entry.note || '');
+  const dispatch = useDispatch()
+  const [editing, setEditing] = useState(false)
+  const [categoryId, setCategoryId] = useState(entry.category_id)
+  const [entryDate, setEntryDate] = useState(entry.entry_date)
+  const [note, setNote] = useState(entry.note || '')
   const [duration, setDuration] = useState({
     text: formatDuration(entry.minutes),
     minutes: entry.minutes,
     error: null,
-  });
-  const [saving, setSaving] = useState(false);
+  })
+  const [saving, setSaving] = useState(false)
 
   function startEditing() {
-    setCategoryId(entry.category_id);
-    setEntryDate(entry.entry_date);
-    setNote(entry.note || '');
-    setDuration({ text: formatDuration(entry.minutes), minutes: entry.minutes, error: null });
-    setEditing(true);
+    setCategoryId(entry.category_id)
+    setEntryDate(entry.entry_date)
+    setNote(entry.note || '')
+    setDuration({ text: formatDuration(entry.minutes), minutes: entry.minutes, error: null })
+    setEditing(true)
   }
 
   async function handleSave(event) {
-    event.preventDefault();
-    if (!duration.minutes) return;
-    setSaving(true);
+    event.preventDefault()
+    if (!duration.minutes) return
+    setSaving(true)
     const action = await dispatch(
       updateEntry({
         id: entry.id,
@@ -62,17 +62,17 @@ function EntryRow({ entry, categories, onSaved }) {
           note,
         },
       }),
-    );
-    setSaving(false);
+    )
+    setSaving(false)
     if (!action.type.endsWith('/rejected')) {
-      setEditing(false);
-      if (onSaved) onSaved();
+      setEditing(false)
+      if (onSaved) onSaved()
     }
   }
 
   function handleDelete() {
-    const label = `${formatDuration(entry.minutes)} on ${formatDateKey(entry.entry_date)}`;
-    if (window.confirm(`Delete this entry (${label})?`)) dispatch(deleteEntry(entry.id));
+    const label = `${formatDuration(entry.minutes)} on ${formatDateKey(entry.entry_date)}`
+    if (window.confirm(`Delete this entry (${label})?`)) dispatch(deleteEntry(entry.id))
   }
 
   if (editing) {
@@ -113,7 +113,7 @@ function EntryRow({ entry, categories, onSaved }) {
           </form>
         </td>
       </tr>
-    );
+    )
   }
 
   return (
@@ -140,41 +140,41 @@ function EntryRow({ entry, categories, onSaved }) {
         </button>
       </td>
     </tr>
-  );
+  )
 }
 
 export default function EntriesPage() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  const allCategories = useSelector(selectAllCategories);
-  const entriesWithCategory = useSelector(selectEntriesWithCategory);
-  const status = useSelector(selectEntriesStatus);
-  const error = useSelector(selectEntriesError);
+  const allCategories = useSelector(selectAllCategories)
+  const entriesWithCategory = useSelector(selectEntriesWithCategory)
+  const status = useSelector(selectEntriesStatus)
+  const error = useSelector(selectEntriesError)
 
-  const [preset, setPreset] = useState('month');
-  const [range, setRange] = useState(() => currentPeriodRange('monthly'));
-  const [categoryId, setCategoryId] = useState('');
+  const [preset, setPreset] = useState('month')
+  const [range, setRange] = useState(() => currentPeriodRange('monthly'))
+  const [categoryId, setCategoryId] = useState('')
 
   function applyPreset(key) {
-    setPreset(key);
-    const found = PRESETS.find((item) => item.key === key);
-    if (found) setRange(found.build());
+    setPreset(key)
+    const found = PRESETS.find((item) => item.key === key)
+    if (found) setRange(found.build())
   }
 
   function setRangeField(field, value) {
-    setPreset('custom');
-    setRange((current) => ({ ...current, [field]: value }));
+    setPreset('custom')
+    setRange((current) => ({ ...current, [field]: value }))
   }
 
   const visible = useMemo(() => {
-    const inRange = filterByRange(entriesWithCategory, range);
-    return categoryId ? inRange.filter((entry) => entry.category_id === categoryId) : inRange;
-  }, [entriesWithCategory, range, categoryId]);
+    const inRange = filterByRange(entriesWithCategory, range)
+    return categoryId ? inRange.filter((entry) => entry.category_id === categoryId) : inRange
+  }, [entriesWithCategory, range, categoryId])
 
-  const total = useMemo(() => sumMinutes(visible), [visible]);
+  const total = useMemo(() => sumMinutes(visible), [visible])
 
   if (status === 'loading' || status === 'idle') {
-    return <Spinner label="Loading entries" />;
+    return <Spinner label="Loading entries" />
   }
 
   return (
@@ -274,5 +274,5 @@ export default function EntriesPage() {
         )}
       </section>
     </div>
-  );
+  )
 }

@@ -1,5 +1,5 @@
 export default function ErrorBanner({ message, onDismiss }) {
-  if (!message) return null;
+  if (!message) return null
 
   return (
     <div
@@ -13,5 +13,5 @@ export default function ErrorBanner({ message, onDismiss }) {
         </button>
       ) : null}
     </div>
-  );
+  )
 }

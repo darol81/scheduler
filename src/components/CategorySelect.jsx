@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId } from 'react'
 
 /** Plain <select> over the user's active categories. */
 export default function CategorySelect({
@@ -10,8 +10,8 @@ export default function CategorySelect({
   allLabel = 'All categories',
   id,
 }) {
-  const generatedId = useId();
-  const selectId = id || generatedId;
+  const generatedId = useId()
+  const selectId = id || generatedId
 
   return (
     <div>
@@ -39,5 +39,5 @@ export default function CategorySelect({
         ))}
       </select>
     </div>
-  );
+  )
 }

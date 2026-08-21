@@ -1,5 +1,5 @@
-import { useEffect, useId, useState } from 'react';
-import { MAX_ENTRY_MINUTES, formatDuration, parseDuration } from '../utils/duration';
+import { useEffect, useId, useState } from 'react'
+import { MAX_ENTRY_MINUTES, formatDuration, parseDuration } from '../utils/duration'
 
 /**
  * Free-text duration field. Keeps the raw string locally, parses on every
@@ -16,29 +16,29 @@ export default function DurationInput({
   required = true,
   id,
 }) {
-  const generatedId = useId();
-  const inputId = id || generatedId;
-  const [text, setText] = useState(value || '');
+  const generatedId = useId()
+  const inputId = id || generatedId
+  const [text, setText] = useState(value || '')
 
   // Let the parent reset the field (e.g. after a successful save).
   useEffect(() => {
-    setText(value || '');
-  }, [value]);
+    setText(value || '')
+  }, [value])
 
-  const trimmed = text.trim();
-  const result = trimmed === '' ? null : parseDuration(trimmed, { maxMinutes });
-  const minutes = result && result.minutes ? result.minutes : null;
-  const error = result && result.error ? result.error : null;
+  const trimmed = text.trim()
+  const result = trimmed === '' ? null : parseDuration(trimmed, { maxMinutes })
+  const minutes = result && result.minutes ? result.minutes : null
+  const error = result && result.error ? result.error : null
 
   function handleChange(event) {
-    const next = event.target.value;
-    setText(next);
-    const parsed = next.trim() === '' ? null : parseDuration(next, { maxMinutes });
+    const next = event.target.value
+    setText(next)
+    const parsed = next.trim() === '' ? null : parseDuration(next, { maxMinutes })
     onChange({
       text: next,
       minutes: parsed && parsed.minutes ? parsed.minutes : null,
       error: parsed && parsed.error ? parsed.error : null,
-    });
+    })
   }
 
   return (
@@ -65,5 +65,5 @@ export default function DurationInput({
         {error || (minutes ? `= ${formatDuration(minutes)}` : 'Type 1h 20min, 90min, 90 or 1,5h')}
       </p>
     </div>
-  );
+  )
 }

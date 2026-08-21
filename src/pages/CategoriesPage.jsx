@@ -1,10 +1,10 @@
-import { useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
-import CategoryDot from '../components/CategoryDot';
-import EmptyState from '../components/EmptyState';
-import ErrorBanner from '../components/ErrorBanner';
-import Spinner from '../components/Spinner';
+import CategoryDot from '../components/CategoryDot'
+import EmptyState from '../components/EmptyState'
+import ErrorBanner from '../components/ErrorBanner'
+import Spinner from '../components/Spinner'
 
 import {
   addCategory,
@@ -14,15 +14,15 @@ import {
   selectCategoriesStatus,
   setCategoryArchived,
   updateCategory,
-} from '../store/categoriesSlice';
+} from '../store/categoriesSlice'
 import {
   groupMinutesByCategory,
   selectActiveCategories,
   selectArchivedCategories,
-} from '../store/selectors';
-import { selectAllEntries } from '../store/entriesSlice';
-import { CATEGORY_COLORS, suggestColor } from '../lib/palette';
-import { formatDuration } from '../utils/duration';
+} from '../store/selectors'
+import { selectAllEntries } from '../store/entriesSlice'
+import { CATEGORY_COLORS, suggestColor } from '../lib/palette'
+import { formatDuration } from '../utils/duration'
 
 function ColorPicker({ value, onChange }) {
   return (
@@ -43,28 +43,28 @@ function ColorPicker({ value, onChange }) {
         />
       ))}
     </div>
-  );
+  )
 }
 
 function CategoryRow({ category, minutes, onSave, onArchive, onDelete }) {
-  const [editing, setEditing] = useState(false);
-  const [name, setName] = useState(category.name);
-  const [color, setColor] = useState(category.color);
-  const [busy, setBusy] = useState(false);
+  const [editing, setEditing] = useState(false)
+  const [name, setName] = useState(category.name)
+  const [color, setColor] = useState(category.color)
+  const [busy, setBusy] = useState(false)
 
   function startEditing() {
-    setName(category.name);
-    setColor(category.color);
-    setEditing(true);
+    setName(category.name)
+    setColor(category.color)
+    setEditing(true)
   }
 
   async function handleSave(event) {
-    event.preventDefault();
-    if (!name.trim()) return;
-    setBusy(true);
-    const ok = await onSave({ name, color });
-    setBusy(false);
-    if (ok) setEditing(false);
+    event.preventDefault()
+    if (!name.trim()) return
+    setBusy(true)
+    const ok = await onSave({ name, color })
+    setBusy(false)
+    if (ok) setEditing(false)
   }
 
   if (editing) {
@@ -90,7 +90,7 @@ function CategoryRow({ category, minutes, onSave, onArchive, onDelete }) {
           </div>
         </form>
       </li>
-    );
+    )
   }
 
   return (
@@ -120,55 +120,55 @@ function CategoryRow({ category, minutes, onSave, onArchive, onDelete }) {
         ) : null}
       </span>
     </li>
-  );
+  )
 }
 
 export default function CategoriesPage() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  const active = useSelector(selectActiveCategories);
-  const archived = useSelector(selectArchivedCategories);
-  const status = useSelector(selectCategoriesStatus);
-  const error = useSelector(selectCategoriesError);
-  const entries = useSelector(selectAllEntries);
+  const active = useSelector(selectActiveCategories)
+  const archived = useSelector(selectArchivedCategories)
+  const status = useSelector(selectCategoriesStatus)
+  const error = useSelector(selectCategoriesError)
+  const entries = useSelector(selectAllEntries)
 
-  const minutesByCategory = useMemo(() => groupMinutesByCategory(entries), [entries]);
+  const minutesByCategory = useMemo(() => groupMinutesByCategory(entries), [entries])
 
-  const [newName, setNewName] = useState('');
-  const [newColor, setNewColor] = useState(null);
-  const [adding, setAdding] = useState(false);
-  const [showArchived, setShowArchived] = useState(false);
+  const [newName, setNewName] = useState('')
+  const [newColor, setNewColor] = useState(null)
+  const [adding, setAdding] = useState(false)
+  const [showArchived, setShowArchived] = useState(false)
 
-  const color = newColor || suggestColor(active.concat(archived));
+  const color = newColor || suggestColor(active.concat(archived))
 
   async function handleAdd(event) {
-    event.preventDefault();
-    if (!newName.trim()) return;
-    setAdding(true);
-    const action = await dispatch(addCategory({ name: newName, color }));
-    setAdding(false);
+    event.preventDefault()
+    if (!newName.trim()) return
+    setAdding(true)
+    const action = await dispatch(addCategory({ name: newName, color }))
+    setAdding(false)
     if (!action.type.endsWith('/rejected')) {
-      setNewName('');
-      setNewColor(null);
+      setNewName('')
+      setNewColor(null)
     }
   }
 
   async function handleSave(id, changes) {
-    const action = await dispatch(updateCategory({ id, changes }));
-    return !action.type.endsWith('/rejected');
+    const action = await dispatch(updateCategory({ id, changes }))
+    return !action.type.endsWith('/rejected')
   }
 
   function handleArchive(category) {
-    dispatch(setCategoryArchived({ id: category.id, archived: !category.archived }));
+    dispatch(setCategoryArchived({ id: category.id, archived: !category.archived }))
   }
 
   function handleDelete(category) {
-    const confirmed = window.confirm(`Delete the category "${category.name}"? This cannot be undone.`);
-    if (confirmed) dispatch(deleteCategory(category.id));
+    const confirmed = window.confirm(`Delete the category "${category.name}"? This cannot be undone.`)
+    if (confirmed) dispatch(deleteCategory(category.id))
   }
 
   if (status === 'loading' || status === 'idle') {
-    return <Spinner label="Loading categories" />;
+    return <Spinner label="Loading categories" />
   }
 
   return (
@@ -257,5 +257,5 @@ export default function CategoriesPage() {
         </section>
       ) : null}
     </div>
-  );
+  )
 }

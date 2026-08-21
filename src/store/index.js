@@ -1,15 +1,15 @@
-import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './authSlice';
-import categoriesReducer from './categoriesSlice';
-import entriesReducer from './entriesSlice';
-import goalsReducer from './goalsSlice';
+import { configureStore } from '@reduxjs/toolkit'
+import authReducer from './authSlice'
+import categoriesReducer from './categoriesSlice'
+import entriesReducer from './entriesSlice'
+import goalsReducer from './goalsSlice'
 
 const reducer = {
   auth: authReducer,
   categories: categoriesReducer,
   entries: entriesReducer,
   goals: goalsReducer,
-};
+}
 
 /**
  * Factory so tests can build a store with preloaded state; the app itself uses
@@ -26,9 +26,9 @@ export function createAppStore(preloadedState) {
       actionSanitizer: (action) =>
         action.meta && action.meta.arg && action.meta.arg.password
           ? {
-              ...action,
-              meta: { ...action.meta, arg: { ...action.meta.arg, password: '***' } },
-            }
+            ...action,
+            meta: { ...action.meta, arg: { ...action.meta.arg, password: '***' } },
+          }
           : action,
     },
     middleware: (getDefaultMiddleware) =>
@@ -40,9 +40,9 @@ export function createAppStore(preloadedState) {
           ignoredPaths: ['auth.session', 'auth.user'],
         },
       }),
-  });
+  })
 }
 
-export const store = createAppStore();
+export const store = createAppStore()
 
-export default store;
+export default store

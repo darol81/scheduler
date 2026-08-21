@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
 import {
   Bar,
   BarChart,
@@ -10,20 +10,20 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from 'recharts';
+} from 'recharts'
 
-import EmptyState from '../components/EmptyState';
-import Spinner from '../components/Spinner';
+import EmptyState from '../components/EmptyState'
+import Spinner from '../components/Spinner'
 
-import { selectAllCategories } from '../store/categoriesSlice';
-import { selectAllEntries, selectEntriesStatus } from '../store/entriesSlice';
+import { selectAllCategories } from '../store/categoriesSlice'
+import { selectAllEntries, selectEntriesStatus } from '../store/entriesSlice'
 import {
   buildDailySeries,
   filterByRange,
   groupMinutesByCategory,
   sumMinutes,
-} from '../store/selectors';
-import { formatDuration, toHours } from '../utils/duration';
+} from '../store/selectors'
+import { formatDuration, toHours } from '../utils/duration'
 import {
   currentPeriodRange,
   eachDayKey,
@@ -31,24 +31,24 @@ import {
   lastNDaysRange,
   toDateKey,
   fromDateKey,
-} from '../utils/periods';
+} from '../utils/periods'
 
 // Beyond this the per-day chart turns into a smear, so it is hidden instead.
-const MAX_DAILY_BARS = 120;
+const MAX_DAILY_BARS = 120
 
 const PRESETS = [
   { key: 'week', label: 'This week', build: () => currentPeriodRange('weekly') },
   { key: 'month', label: 'This month', build: () => currentPeriodRange('monthly') },
   { key: 'last30', label: 'Last 30 days', build: () => lastNDaysRange(30) },
   { key: 'last90', label: 'Last 90 days', build: () => lastNDaysRange(90) },
-];
+]
 
 /** Recharts hands us minutes; humans want "1h 20min". */
 function DurationTooltip({ active, payload, label, labelFormatter }) {
-  if (!active || !payload || payload.length === 0) return null;
+  if (!active || !payload || payload.length === 0) return null
 
-  const rows = payload.filter((item) => item.value > 0);
-  if (rows.length === 0) return null;
+  const rows = payload.filter((item) => item.value > 0)
+  if (rows.length === 0) return null
 
   return (
     <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-md">
@@ -66,35 +66,35 @@ function DurationTooltip({ active, payload, label, labelFormatter }) {
         ))}
       </ul>
     </div>
-  );
+  )
 }
 
 export default function ReportsPage() {
-  const categories = useSelector(selectAllCategories);
-  const entries = useSelector(selectAllEntries);
-  const status = useSelector(selectEntriesStatus);
+  const categories = useSelector(selectAllCategories)
+  const entries = useSelector(selectAllEntries)
+  const status = useSelector(selectEntriesStatus)
 
-  const [preset, setPreset] = useState('month');
-  const [range, setRange] = useState(() => currentPeriodRange('monthly'));
+  const [preset, setPreset] = useState('month')
+  const [range, setRange] = useState(() => currentPeriodRange('monthly'))
 
   function applyPreset(key) {
-    setPreset(key);
-    const found = PRESETS.find((item) => item.key === key);
-    if (found) setRange(found.build());
+    setPreset(key)
+    const found = PRESETS.find((item) => item.key === key)
+    if (found) setRange(found.build())
   }
 
   function setRangeField(field, value) {
-    if (!value) return;
-    setPreset('custom');
-    setRange((current) => ({ ...current, [field]: value }));
+    if (!value) return
+    setPreset('custom')
+    setRange((current) => ({ ...current, [field]: value }))
   }
 
-  const rangeEntries = useMemo(() => filterByRange(entries, range), [entries, range]);
-  const total = useMemo(() => sumMinutes(rangeEntries), [rangeEntries]);
+  const rangeEntries = useMemo(() => filterByRange(entries, range), [entries, range])
+  const total = useMemo(() => sumMinutes(rangeEntries), [rangeEntries])
 
   // Only categories with time in this range, biggest first.
   const categoryTotals = useMemo(() => {
-    const totals = groupMinutesByCategory(rangeEntries);
+    const totals = groupMinutesByCategory(rangeEntries)
     return categories
       .filter((category) => totals[category.id] > 0)
       .map((category) => ({
@@ -104,33 +104,33 @@ export default function ReportsPage() {
         minutes: totals[category.id],
         share: total > 0 ? Math.round((totals[category.id] / total) * 100) : 0,
       }))
-      .sort((a, b) => b.minutes - a.minutes);
-  }, [rangeEntries, categories, total]);
+      .sort((a, b) => b.minutes - a.minutes)
+  }, [rangeEntries, categories, total])
 
   const dayCount = useMemo(() => {
-    const start = fromDateKey(range.from);
-    const end = fromDateKey(range.to);
-    if (end < start) return 0;
-    return eachDayKey(range.from, range.to).length;
-  }, [range]);
+    const start = fromDateKey(range.from)
+    const end = fromDateKey(range.to)
+    if (end < start) return 0
+    return eachDayKey(range.from, range.to).length
+  }, [range])
 
   const dailySeries = useMemo(() => {
-    if (dayCount === 0 || dayCount > MAX_DAILY_BARS) return [];
+    if (dayCount === 0 || dayCount > MAX_DAILY_BARS) return []
     const stacked = categories.filter((category) =>
       categoryTotals.some((row) => row.id === category.id),
-    );
-    return buildDailySeries(entries, stacked, range);
-  }, [entries, categories, categoryTotals, range, dayCount]);
+    )
+    return buildDailySeries(entries, stacked, range)
+  }, [entries, categories, categoryTotals, range, dayCount])
 
   const stackedCategories = useMemo(
     () => categories.filter((category) => categoryTotals.some((row) => row.id === category.id)),
     [categories, categoryTotals],
-  );
+  )
 
-  const averagePerDay = dayCount > 0 ? Math.round(total / dayCount) : 0;
+  const averagePerDay = dayCount > 0 ? Math.round(total / dayCount) : 0
 
   if (status === 'loading' || status === 'idle') {
-    return <Spinner label="Loading reports" />;
+    return <Spinner label="Loading reports" />
   }
 
   return (
@@ -295,5 +295,5 @@ export default function ReportsPage() {
         </>
       )}
     </div>
-  );
+  )
 }

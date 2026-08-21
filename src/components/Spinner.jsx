@@ -7,5 +7,5 @@ export default function Spinner({ label = 'Loading' }) {
       />
       <span>{label}</span>
     </div>
-  );
+  )
 }

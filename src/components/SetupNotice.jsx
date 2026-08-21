@@ -39,5 +39,5 @@ export default function SetupNotice() {
         </p>
       </div>
     </div>
-  );
+  )
 }

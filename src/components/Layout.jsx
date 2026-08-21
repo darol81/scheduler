@@ -1,6 +1,6 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { NavLink, Outlet } from 'react-router-dom';
-import { selectUser, signOut } from '../store/authSlice';
+import { useDispatch, useSelector } from 'react-redux'
+import { NavLink, Outlet } from 'react-router-dom'
+import { selectUser, signOut } from '../store/authSlice'
 
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', end: true },
@@ -8,21 +8,21 @@ const NAV_ITEMS = [
   { to: '/goals', label: 'Goals' },
   { to: '/categories', label: 'Categories' },
   { to: '/reports', label: 'Reports' },
-];
+]
 
 function navClass({ isActive }) {
   return [
     'rounded-lg px-3 py-2 text-sm font-medium transition',
     isActive ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
-  ].join(' ');
+  ].join(' ')
 }
 
 export default function Layout() {
-  const dispatch = useDispatch();
-  const user = useSelector(selectUser);
-  const email = user && user.email;
+  const dispatch = useDispatch()
+  const user = useSelector(selectUser)
+  const email = user && user.email
   // Accounts are email + password, so there is no provider avatar to fetch.
-  const initial = email ? email.trim().charAt(0).toUpperCase() : '?';
+  const initial = email ? email.trim().charAt(0).toUpperCase() : '?'
 
   return (
     <div className="min-h-screen">
@@ -59,5 +59,5 @@ export default function Layout() {
         <Outlet />
       </main>
     </div>
-  );
+  )
 }

@@ -1,13 +1,13 @@
-import { formatDuration } from '../utils/duration';
-import { PERIOD_WINDOW_LABELS } from '../utils/periods';
+import { formatDuration } from '../utils/duration'
+import { PERIOD_WINDOW_LABELS } from '../utils/periods'
 
 /**
  * One goal, its target and how far the current period has got.
  * The bar caps at 100% but the label keeps counting past it.
  */
 export default function GoalProgressBar({ progress, showPeriod = true, children }) {
-  const { category, goal, actualMinutes, targetMinutes, pct, met, remainingMinutes } = progress;
-  const width = Math.min(100, pct);
+  const { category, goal, actualMinutes, targetMinutes, pct, met, remainingMinutes } = progress
+  const width = Math.min(100, pct)
 
   return (
     <div>
@@ -40,5 +40,5 @@ export default function GoalProgressBar({ progress, showPeriod = true, children 
         {met ? `Goal met (${pct}%)` : `${pct}% -- ${formatDuration(remainingMinutes)} to go`}
       </p>
     </div>
-  );
+  )
 }

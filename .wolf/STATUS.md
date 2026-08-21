@@ -2,7 +2,7 @@
 
 > Single source of truth for resuming work. Read this FIRST when starting a session.
 > Update this file at the end of every work phase so the next `/clear` resumes in 1 read.
-> Last updated: 2026-08-20
+> Last updated: 2026-08-21
 
 ---
 
@@ -21,6 +21,17 @@
   "API keys" and "Legacy API keys" tabs), which the old docs did not match.
   Touched `manual_work_todo.md` (new `## Manual steps` checklist),
   `.env.example` (header comment), `README.md` §1.1 + §2.
+
+**Linting (this session)**
+- ESLint 10 flat config added (`eslint.config.js`) from the now-deleted
+  `lintfile.js` spec: `@stylistic/js` indent 2 / unix linebreaks / single quotes /
+  no semicolons, plus `eqeqeq`, `no-trailing-spaces`, `object-curly-spacing`,
+  `arrow-spacing`, `no-console` off. Environment adapted to this project
+  (ESM + browser globals + JSX; node globals only for `vite.config.js` /
+  `eslint.config.js`); `.wolf/**`, `dist/**`, `build/**` ignored.
+  Scripts: `npm run lint`, `npm run lint:fix`. Whole `src/` auto-fixed
+  (1810 problems -> 0) and `.gitattributes` (`* text=auto eol=lf`) added so
+  `core.autocrlf=true` cannot reintroduce CRLF. 106 tests pass, build clean.
 
 ---
 
