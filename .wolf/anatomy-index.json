@@ -1,12 +1,12 @@
 {
   "version": 1,
   "meta": {
-    "lastScanned": "2026-08-21T11:32:56.619Z",
+    "lastScanned": "2026-08-21T12:05:14.658Z",
     "fileCount": 63,
     "hits": 0,
     "misses": 0,
-    "renderedHash": "5d0f7cfee0cd53d21dc858bf2c55730baed209c9b6c77c16b7afcca02721634f",
-    "storeUpdatedAt": "2026-08-21T11:32:56.626Z"
+    "renderedHash": "5b7f2c6a7f96752d40f2b3380093fb5a45341702962b5c8e18d06313a5cb7974",
+    "storeUpdatedAt": "2026-08-21T12:05:14.665Z"
   },
   "files": {
     ".claude/commands/designqc.md": {
@@ -119,12 +119,12 @@
     },
     "README.md": {
       "description": "Project documentation",
-      "tokens": 1696,
-      "hash": "ce721f4669f2e5b5",
-      "size": 6786,
-      "mtimeMs": 1787229602599.2644,
-      "updatedAt": "2026-08-20T12:58:12.924Z",
-      "source": "scan"
+      "tokens": 3178,
+      "hash": "8647d868ac43ccda",
+      "size": 12718,
+      "mtimeMs": 1787313914327.8303,
+      "updatedAt": "2026-08-21T12:05:14.657Z",
+      "source": "hook"
     },
     "src/App.jsx": {
       "description": "ReportsPage — renders chart — uses useEffect",
@@ -1038,13 +1038,13 @@
       "source": "scan"
     },
     "vite.config.js": {
-      "description": "Vite build configuration",
-      "tokens": 85,
-      "hash": "8a92abd6ce321d2c",
-      "size": 295,
-      "mtimeMs": 1787224321323.3586,
-      "updatedAt": "2026-08-20T12:58:12.933Z",
-      "source": "scan"
+      "description": "/*.{test,spec}.{js,jsx}'],",
+      "tokens": 403,
+      "hash": "f1f633e51f121e2f",
+      "size": 1409,
+      "mtimeMs": 1787313868764.299,
+      "updatedAt": "2026-08-21T12:04:29.085Z",
+      "source": "hook"
     },
     "e2e/helpers/env.js": {
       "description": "Load the suite's configuration and publish it on process.env.",

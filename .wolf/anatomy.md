@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-08-21T11:32:56.619Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-08-21T12:05:14.658Z
 > Files: 63 tracked | Anatomy hits: 0 | Misses: 0
 
 > Project structure index. Auto-maintained by OpenWolf hooks and daemon.
@@ -17,8 +17,8 @@
 - `package-lock.json` — npm lock file (~32154 tok)
 - `package.json` — Node.js package manifest (~229 tok)
 - `playwright.config.js` (~747 tok)
-- `README.md` — Project documentation (~1696 tok)
-- `vite.config.js` — Vite build configuration (~85 tok)
+- `README.md` — Project documentation (~3178 tok)
+- `vite.config.js` — /*.{test,spec}.{js,jsx}'], (~403 tok)
 
 ## .claude/
 
