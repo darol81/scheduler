@@ -28,6 +28,55 @@
       ],
       "occurrences": 1,
       "last_seen": "2026-08-21"
+    },
+    {
+      "date": "2026-08-21",
+      "error_message": "Error: Timed out waiting 120000ms from config.webServer",
+      "file": "playwright.config.js",
+      "root_cause": "Vite's default host is `localhost`, which resolves to ::1 first on Windows, so the dev server bound IPv6-only while Playwright's readiness poll knocked on http://127.0.0.1:5175 forever. vite.config.js has no server block, so nothing pinned the interface.",
+      "fix": "Pass the interface on the webServer command line: `npm run dev -- --port 5175 --strictPort --host 127.0.0.1`. Playwright's own `port`/`url` options only say what to poll, they configure nothing.",
+      "tags": [
+        "playwright",
+        "vite",
+        "windows",
+        "ipv6",
+        "webserver"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-08-21"
+    },
+    {
+      "date": "2026-08-21",
+      "error_message": "Email address \"worktime-e2e-a@example.com\" is invalid  /  email rate limit exceeded",
+      "file": "e2e/helpers/backend.js",
+      "root_cause": "Supabase's signUp validator rejects placeholder domains (example.com, anything under .test). Retrying across candidate domains then tripped the per-project email rate limit, because signUp is metered against the email quota even when confirmations are off. signInWithPassword does NOT run the domain validator, so probing with sign-in cannot tell you which domains are acceptable.",
+      "fix": "Stop calling signUp at all. The two E2E accounts are created once by hand in the dashboard (Authentication -> Users -> Add user, Auto Confirm User ticked) and the suite only ever signs in -- no mail, no metering, no dependency on the Confirm-email or Allow-signups settings.",
+      "tags": [
+        "supabase",
+        "gotrue",
+        "e2e",
+        "rate-limit",
+        "email-validation"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-08-21"
+    },
+    {
+      "date": "2026-08-21",
+      "error_message": "e2e entries.spec.js:26 'every duration notation lands on the right number of minutes' fails only in a parallel run: expect(categoryRow).toBeVisible() times out at helpers/app.js:49 and the page snapshot shows the /login screen.",
+      "file": "src/store/authSlice.js",
+      "root_cause": "supabase-js defaults supabase.auth.signOut() to scope 'global', which revokes EVERY refresh token the user holds, not just the calling browser's. auth.spec.js:72 signs in as ACCOUNT_A and signs out; both E2E accounts are shared by every worker, so that global revocation killed the ACCOUNT_A session of whatever test was running concurrently on the other worker. The longest entries test was the usual victim. It passed when run alone because nothing else was signed in as A.",
+      "fix": "supabase.auth.signOut({ scope: 'local' }) in authSlice.js (and the same in e2e/helpers/backend.js so `npm run e2e:reset` cannot do it either). Local scope still clears the persisted session from localStorage, which is all the sign-out test actually asserts. Repro was deterministic with just `npx playwright test e2e/auth.spec.js e2e/entries.spec.js`; green after the fix, and two back-to-back full runs pass 13/13.",
+      "tags": [
+        "e2e",
+        "playwright",
+        "supabase",
+        "auth",
+        "flaky",
+        "parallel"
+      ],
+      "occurrences": 2,
+      "last_seen": "2026-08-21"
     }
   ]
 }

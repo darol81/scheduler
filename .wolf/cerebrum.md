@@ -8,6 +8,17 @@
 
 <!-- How the user likes things done. Code style, tools, patterns, communication. -->
 
+- **Never use the user's own email address for test fixtures.** Asked for E2E
+  test accounts, they explicitly declined plus-aliases on their personal Gmail
+  and asked for a scheme that keeps their identity out of it entirely.
+- **Prefer test designs that do not exercise third-party subsystems.** Their
+  words: auth "is a third party program and therefore the login is not
+  necessarily as functional part". Test the app's own behaviour (routing,
+  validation, error messages) and avoid depending on the vendor's mail
+  pipeline, quotas or dashboard toggles wherever a design can sidestep them.
+- Wants npm scripts kept separate and explicit: `npm test` = Vitest only,
+  `npm run e2e` = Playwright only.
+
 ## Key Learnings
 
 - **Project:** worktime-scheduler
@@ -21,6 +32,52 @@
   "Legacy API keys" tab (the `eyJ...` anon public JWT). Either browser-safe key
   works with @supabase/supabase-js ^2.112 for VITE_SUPABASE_ANON_KEY; a secret key
   must never be used because Vite inlines VITE_* into the client bundle.
+
+- **GitHub CLI (2026-08-21):** `gh` is installed at `C:\Program Files\GitHub CLI\gh.exe`
+  and IS on the machine PATH, but a shell started before the install has a stale
+  environment and reports "gh: command not found". Call it by full path in that
+  session (`& "C:\Program Files\GitHub CLI\gh.exe" ...`) instead of concluding it is
+  missing. Logged in as `darol81` (scopes: repo, workflow, read:org, gist);
+  `gh auth setup-git` has been run, so git uses the CLI token as the credential
+  helper for github.com. Remote: `https://github.com/darol81/scheduler.git`.
+
+- **Supabase signUp validates the email domain; signInWithPassword does not.**
+  `example.com` and anything under `.test` come back as
+  `Email address "..." is invalid`. You therefore cannot probe which domains are
+  acceptable by attempting sign-ins -- only signUp runs the validator. signUp is
+  also metered against the project's email quota even with confirmations off, so
+  a handful of probe attempts trips `email rate limit exceeded` for an hour.
+  Accounts created from the dashboard with "Auto Confirm User" skip all of this.
+
+- **Vitest 4's default exclude is only `node_modules` and `.git`** -- not
+  `dist`, not any new directory. Its default include is `**/*.{test,spec}.*`
+  rooted at the project, so ANY new top-level test directory is collected
+  automatically. `vite.config.js` pins `include` to `src/**` for this reason.
+
+- **Vite binds to `localhost` = `::1` first on Windows.** A Playwright
+  `webServer` polling `127.0.0.1` will time out against it. Pass
+  `--host 127.0.0.1` on the command line; Playwright's `port`/`url` options
+  only say what to poll, they configure nothing about the server.
+
+- **Dropping an RLS policy does not simulate a leak.** With RLS still enabled
+  and no policy left, the table is deny-all: everyone sees nothing, so an
+  isolation test stays green while the app is completely broken. The faithful
+  mutations are `disable row level security` or widening a policy to
+  `using (true)`.
+
+- **`supabase.auth.signOut()` defaults to `scope: 'global'`.** It revokes every
+  refresh token the user holds, on every device -- not just the calling tab.
+  In an E2E suite where all workers share two accounts, one test signing out
+  silently kills the session of every concurrently running test, which surfaces
+  as an unrelated spec timing out on the /login screen. Pass
+  `{ scope: 'local' }` unless "sign out everywhere" is genuinely the intent.
+
+- **A parallel-only E2E failure is usually shared server-side state, not a
+  timing bug.** When a spec passes alone and fails in a full run, reproduce by
+  running just the two suspect spec files together before touching any waits or
+  timeouts -- `npx playwright test e2e/a.spec.js e2e/b.spec.js`. Read the
+  `error-context.md` page snapshot first; it says what the page actually showed,
+  which is faster than reasoning about the assertion that timed out.
 
 ## Do-Not-Repeat
 

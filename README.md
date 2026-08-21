@@ -89,13 +89,85 @@ go in this file -- it would ship to every visitor and bypass those policies.
 
 ## 3. Tests
 
+### 3.1 Unit tests
+
 ```bash
 npm test           # single run
 npm run test:watch
 ```
 
-The tests cover the parts with real logic: duration parsing, period boundaries
-(Monday-start weeks, month ends), and goal-progress aggregation.
+These never touch the network. They cover the parts with real logic: duration
+parsing, period boundaries (Monday-start weeks, month ends), and goal-progress
+aggregation.
+
+### 3.2 End-to-end tests
+
+```bash
+npm run e2e        # headless Chromium against a real Supabase project
+npm run e2e:ui     # the Playwright UI, for debugging
+npm run e2e:report # open the report from the last run
+npm run e2e:reset  # empty both test accounts without running anything
+```
+
+The unit tests mock Supabase away, which means the thing most worth checking --
+that the RLS policies in [`supabase/schema.sql`](supabase/schema.sql) really do
+keep one account's data away from another's -- cannot be tested there at all.
+The end-to-end suite in [`e2e/`](e2e) drives a real browser against a real
+project and asserts exactly that, along with the auth round-trip, the duration
+notation and the lazily-loaded reports page.
+
+Three one-time setup steps:
+
+1. **Install the browser.** `npx playwright install chromium` (about 150 MB).
+2. **Create the two test accounts by hand**, under **Authentication -> Users ->
+   Add user**, with **Auto Confirm User** ticked. Use the addresses and
+   password from `.env.e2e.local` (defaults below). Creating them here rather
+   than letting the suite sign up is deliberate: sign-up is the only auth path
+   that touches Supabase's email system, so avoiding it means no confirmation
+   mail, no per-project email rate limit, and no need to leave **Allow new
+   users to sign up** switched on. Nothing is ever mailed to these addresses,
+   so they need not be deliverable or belong to anyone.
+3. **Run [`supabase/e2e.sql`](supabase/e2e.sql)** in the SQL editor, with those
+   same two addresses in the allowlist at the top. It installs
+   `e2e_reset_account()`, which lets the suite empty its own accounts between
+   runs. It is deliberately *not* part of `schema.sql`, so a production project
+   never has it at all.
+
+`.env.e2e.local` is optional -- these are the defaults:
+
+```
+E2E_EMAIL_A=worktime-e2e-a@worktime-e2e.dev
+E2E_EMAIL_B=worktime-e2e-b@worktime-e2e.dev
+E2E_PASSWORD=playwright-e2e-pw
+E2E_PORT=5175
+```
+
+It is gitignored by the existing `*.local` pattern.
+
+The suite only ever calls `signInWithPassword`, which sends no mail and is not
+metered, so none of this depends on your Supabase mail settings.
+
+`npm test` and `npm run e2e` are entirely separate: `vite.config.js` pins the
+Vitest `include` to `src/`, so the Playwright specs are never collected by the
+unit runner.
+
+#### Proving the RLS test actually tests something
+
+An isolation test that quietly asserts nothing is worse than no test. To check
+this one, simulate a leak in the SQL editor:
+
+```sql
+alter table public.categories   disable row level security;
+alter table public.time_entries disable row level security;
+-- npm run e2e -- rls-isolation     EXPECT: FAIL
+alter table public.categories   enable row level security;
+alter table public.time_entries enable row level security;
+-- npm run e2e -- rls-isolation     EXPECT: PASS
+```
+
+Do **not** use `drop policy` for this. With RLS still enabled and no policy
+left the table becomes deny-all: both accounts see nothing, the test stays
+green, and you have proved nothing while the app is broken.
 
 ---
 
@@ -136,8 +208,12 @@ src/
   store/        index.js, authSlice, categoriesSlice, entriesSlice, goalsSlice, selectors
   components/   Layout, ProtectedRoute, DurationInput, LogTimeForm, GoalProgressBar, ...
   pages/        Login, Dashboard, Entries, Goals, Categories, Reports
+e2e/
+  helpers/      accounts.js, app.js, backend.js, env.js, naming.js
+  *.spec.js     auth, entries, rls-isolation, reports
 supabase/
-  schema.sql
+  schema.sql    tables + RLS policies
+  e2e.sql       test-only reset entry point, never run in production
 ```
 
 ### Accounts and passwords

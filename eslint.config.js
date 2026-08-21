@@ -51,7 +51,9 @@ export default [
     },
   },
   {
-    files: ['vite.config.js', 'eslint.config.js'],
+    // Node globals: config files and the Playwright suite, which reads
+    // process.env for the Supabase URL and the test-account credentials.
+    files: ['vite.config.js', 'eslint.config.js', 'playwright.config.js', 'e2e/**/*.js'],
     languageOptions: {
       globals: {
         ...globals.node,
@@ -60,6 +62,9 @@ export default [
   },
   {
     // .wolf/** is vendored OpenWolf hook tooling (CommonJS, its own style)
-    ignores: ['dist/**', 'build/**', 'node_modules/**', '.wolf/**', 'coverage/**'],
+    ignores: [
+      'dist/**', 'build/**', 'node_modules/**', '.wolf/**', 'coverage/**',
+      'playwright-report/**', 'test-results/**', '.playwright/**',
+    ],
   },
 ]

@@ -55,8 +55,15 @@ export const signInWithPassword = createAsyncThunk(
   },
 )
 
+/**
+ * scope: 'local' is deliberate. supabase-js defaults signOut to scope 'global',
+ * which revokes every refresh token the user holds -- signing out in one tab
+ * would kill the session on their phone too, which is not what a button
+ * labelled just 'Sign out' promises. Local scope still clears the persisted
+ * session from localStorage, which is the part that matters here.
+ */
 export const signOut = createAsyncThunk('auth/signOut', async (_, { rejectWithValue }) => {
-  const { error } = await supabase.auth.signOut()
+  const { error } = await supabase.auth.signOut({ scope: 'local' })
   if (error) return rejectWithValue(friendlyAuthError(error, 'Could not sign out.'))
   return null
 })

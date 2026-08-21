@@ -89,3 +89,34 @@ curl -s -o /dev/null -w "%{http_code}\n" \
 - [ ] **Don't skip this one:** register a second account using a
       `you+test@gmail.com` alias and confirm it sees an *empty* app. That is the
       only real proof the RLS policies are live.
+
+---
+
+### 4. Set up the end-to-end tests
+
+Needed once before `npm run e2e` will run. See README section 3.2.
+
+1. **`npx playwright install chromium`** -- about 150 MB, one download.
+2. **Create two test accounts by hand**: **Authentication -> Users -> Add
+   user**, twice, with **Auto Confirm User** ticked:
+
+   | Email | Password |
+   | --- | --- |
+   | `worktime-e2e-a@worktime-e2e.dev` | `playwright-e2e-pw` |
+   | `worktime-e2e-b@worktime-e2e.dev` | `playwright-e2e-pw` |
+
+   Creating them here rather than letting the suite sign up is deliberate:
+   sign-up is the only auth path that touches Supabase's email system. Doing it
+   this way means no confirmation mail, no per-project email rate limit, and no
+   need to leave **Allow new users to sign up** switched on. Nothing is ever
+   mailed to these addresses, so they do not have to be deliverable. Change
+   them in `.env.e2e.local` and `supabase/e2e.sql` if you prefer others.
+3. **Run [`supabase/e2e.sql`](supabase/e2e.sql)** in the SQL editor. It adds
+   `e2e_reset_account()`, which lets the suite empty its own two accounts
+   between runs, gated on an allowlist so no ordinary user can call it. It is
+   kept out of `schema.sql` on purpose, so a production project never has it.
+
+Then `npm run e2e`. Two accounts are needed because row level security is the
+thing under test: an isolation test with one account cannot tell a working
+policy from a broken one.
+

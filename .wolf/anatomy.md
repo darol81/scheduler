@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-08-20T12:58:12.938Z
-> Files: 57 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-08-21T08:43:31.146Z
+> Files: 58 tracked | Anatomy hits: 0 | Misses: 0
 
 > Project structure index. Auto-maintained by OpenWolf hooks and daemon.
 > Run `openwolf scan` to generate, or wait for the first Claude Code session.
@@ -32,6 +32,10 @@
 ## .claude/rules/
 
 - `openwolf.md` (~251 tok)
+
+## e2e/helpers/
+
+- `env.js` — Load the suite's configuration and publish it on process.env. (~704 tok)
 
 ## src/
 

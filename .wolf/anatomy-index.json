@@ -1,12 +1,12 @@
 {
   "version": 1,
   "meta": {
-    "lastScanned": "2026-08-20T12:58:12.938Z",
-    "fileCount": 57,
+    "lastScanned": "2026-08-21T08:43:31.146Z",
+    "fileCount": 58,
     "hits": 0,
     "misses": 0,
-    "renderedHash": "3c13f07202d666bb0aee26fbca71b2dbb7528984edf6958c8b24a1acabed2984",
-    "storeUpdatedAt": "2026-08-20T12:58:12.941Z"
+    "renderedHash": "009034f6f8fbf62ccc39c2a5ef0ee57128e5fde0e56cfd73738a66dff7a7c220",
+    "storeUpdatedAt": "2026-08-21T08:43:31.154Z"
   },
   "files": {
     ".claude/commands/designqc.md": {
@@ -1022,6 +1022,24 @@
       "mtimeMs": 1787224321323.3586,
       "updatedAt": "2026-08-20T12:58:12.933Z",
       "source": "scan"
+    },
+    "e2e/helpers/env.js": {
+      "description": "Load the suite's configuration and publish it on process.env.",
+      "tokens": 704,
+      "hash": "e84e9d670edcf05c",
+      "size": 2464,
+      "mtimeMs": 1787301810822.1628,
+      "updatedAt": "2026-08-21T08:43:31.145Z",
+      "source": "hook",
+      "symbols": [
+        {
+          "name": "loadE2EEnv",
+          "kind": "fn",
+          "startLine": 10,
+          "endLine": 54,
+          "tokens": 612
+        }
+      ]
     }
   },
   "preamble": [
