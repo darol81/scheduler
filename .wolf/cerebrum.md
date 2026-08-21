@@ -79,6 +79,18 @@
   `error-context.md` page snapshot first; it says what the page actually showed,
   which is faster than reasoning about the assertion that timed out.
 
+- **The `secrets` context is not available in a job-level `if:` in GitHub
+  Actions.** To make a job skip (rather than fail) when a secret is missing, a
+  `preflight` job must read the secret into a step's `env:`, test it there, and
+  publish the answer as a job output the real job gates on via `needs`. This is
+  what `.github/workflows/nightly.yml` does so the E2E job skips itself on an
+  unconfigured repo.
+- **`concurrency: cancel-in-progress: false` is what serialises the E2E suite.**
+  The two Supabase test accounts are shared, and `e2e/global-setup.js` empties
+  them at the start of every run, so two overlapping runs corrupt each other.
+  The default `cancel-in-progress: true` would be actively wrong here: it would
+  kill the run already talking to Supabase in favour of the newcomer.
+
 ## Do-Not-Repeat
 
 <!-- Mistakes made and corrected. Each entry prevents the same mistake recurring. -->

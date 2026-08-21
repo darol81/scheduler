@@ -169,6 +169,45 @@ Do **not** use `drop policy` for this. With RLS still enabled and no policy
 left the table becomes deny-all: both accounts see nothing, the test stays
 green, and you have proved nothing while the app is broken.
 
+## 4. Development workflow
+
+`main` is protected: it takes pull requests only, and a pull request cannot be
+merged until the `checks` job is green. (Admin bypass is left on, so the owner's
+own direct push still works -- the rule is a guardrail, not a wall.) Work happens
+on a branch named after its issue.
+
+```bash
+git switch main && git pull
+git switch -c feat/12-weekly-goals
+# ...commits...
+git push -u origin feat/12-weekly-goals
+gh pr create --fill          # put "Closes #12" in the body
+gh pr merge --squash         # once CI is green
+```
+
+Two workflows back that up:
+
+| Workflow | Trigger | Runs |
+|---|---|---|
+| **CI** | every pull request and push to `main` | `npm run lint`, `npm test`, `npm run build` |
+| **Nightly** | 02:00 UTC, or on demand | the same, plus the 13 end-to-end specs against the real Supabase project |
+
+CI is hermetic -- it needs no Supabase project, no secrets and no accounts, so it
+cannot flake and it works on pull requests from forks. The end-to-end suite is
+kept out of it because it drives a real project and empties two shared accounts,
+which is not something a pull request should be allowed to do.
+
+The nightly end-to-end job skips itself until three secrets exist:
+
+```bash
+gh secret set VITE_SUPABASE_URL
+gh secret set VITE_SUPABASE_ANON_KEY
+gh secret set E2E_PASSWORD
+```
+
+[`CONTRIBUTING.md`](CONTRIBUTING.md) has the rest: branch naming, commit style,
+and what to run before opening a pull request.
+
 ---
 
 ## How it works

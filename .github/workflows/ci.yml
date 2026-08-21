@@ -1,0 +1,46 @@
+name: CI
+
+# The fast gate. Everything here is hermetic -- no Supabase project, no
+# secrets, no accounts -- so it can run on every push, including from forks.
+# The end-to-end suite deliberately lives in nightly.yml instead: it drives a
+# real Supabase project and two shared accounts, which is not something a
+# pull request should be allowed to disturb.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A superseded run on the same branch proves nothing; cancel it.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      # vite.config.js pins the Vitest include to src/, so this is the 106 unit
+      # tests only -- the Playwright specs in e2e/ are never collected here.
+      - run: npm test
+
+      # No VITE_* vars on purpose. src/lib/supabaseClient.js falls back to
+      # placeholders when they are absent, so this proves the bundle compiles
+      # and nothing more, which is exactly what is wanted at this stage.
+      - run: npm run build
