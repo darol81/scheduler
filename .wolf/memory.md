@@ -69,3 +69,4 @@
 | 13:07 | Verified E2E suite (13/13), commented + closed GitHub issue #2 | .wolf/STATUS.md, GitHub #2 | Issue closed as completed; manual RLS negative control still pending | ~25k |
 | 13:29 | Edited playwright.config.js | expanded (+8 lines) | ~179 |
 | 13:30 | Edited CLAUDE.md | expanded (+13 lines) | ~238 |
+| 13:35 | CI + nightly workflows, branch protection, CONTRIBUTING | .github/, CONTRIBUTING.md, playwright.config.js | issue #3 closed via PR #4; nightly skips until secrets set | ~60k |

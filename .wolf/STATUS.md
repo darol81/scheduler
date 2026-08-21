@@ -74,37 +74,71 @@
   runs would race on the two fixed accounts), and the manual RLS negative
   control has still not been run -- see below.
 
+
+**CI and branching policy (this session)** -- GitHub issue #3, PR #4
+- `.github/workflows/ci.yml`: job `checks` runs `lint` + `test` + `build` on
+  every PR and every push to `main`. Hermetic -- no Supabase, no secrets -- so
+  it cannot flake and it works on fork PRs. Green in 22s on its own PR.
+- `.github/workflows/nightly.yml`: `17 2 * * *` + `workflow_dispatch`. Same
+  checks plus the 13 Playwright specs. Verified by dispatch: with no secrets
+  set, `preflight` succeeds and `e2e` is **skipped**, with a `::notice::`
+  saying why.
+- The issue #2 objection is answered by `concurrency: { group: supabase-e2e,
+  cancel-in-progress: false }` on the e2e job -- a manual dispatch fired
+  mid-nightly queues behind it instead of letting global-setup's reset delete
+  the running suite's data. `cancel-in-progress` must stay false.
+- `main` protected: PR required (0 approvals), `checks` must pass (pinned to
+  app_id 15368 so no other app can satisfy it), linear history, no force push,
+  no deletion, `enforce_admins: false`. Repo is squash-only with
+  `delete_branch_on_merge` and auto-merge on.
+- `playwright.config.js` is CI-aware: `forbidOnly`, `retries: 1` on CI, `github`
+  reporter. `workers` stays 2 everywhere.
+- `CONTRIBUTING.md` + `.github/pull_request_template.md` + README §4 +
+  a `## Git workflow` section in `CLAUDE.md`.
+
 ---
 
 ## 🚀 Next phase
 
-**Goal:** No open ticket. Two loose ends, both cheap.
+**Goal:** Three loose ends, none of them large.
 
-### Loose end 1: prove the RLS spec is not vacuous (manual, ~2 min)
-In the Supabase SQL editor:
+### Loose end 1: turn the nightly on (2 min, needs the user)
+The e2e job skips itself until these exist:
+```bash
+gh secret set VITE_SUPABASE_URL
+gh secret set VITE_SUPABASE_ANON_KEY
+gh secret set E2E_PASSWORD
+```
+Then `gh workflow run nightly.yml && gh run watch` and confirm 13/13 on a
+runner. E2E_EMAIL_A/B are deliberately NOT secrets -- the defaults in
+`e2e/helpers/env.js` already match the allowlist in `supabase/e2e.sql`.
 
+Watch for: the runner's egress IP is shared Azure space, so GoTrue's per-IP
+token limit is likelier to bite there than locally (~15 sign-ins per run). If
+the nightly shows rate-limit failures, the first lever is `workers: 1` on CI in
+`playwright.config.js`, not longer timeouts.
+
+### Loose end 2: prove the RLS spec is not vacuous (manual, ~2 min)
+Still not done. In the Supabase SQL editor:
 ```sql
 alter table public.categories disable row level security;   -- expect FAIL
 ```
-`npm run e2e -- e2e/rls-isolation.spec.js` must now **fail**. Then:
-```sql
-alter table public.categories enable row level security;    -- expect PASS
-```
-and it must pass again. Do NOT use `drop policy` for this -- with RLS on and no
-policy the table is deny-all, so the spec stays green while the app is broken.
-README §"Proving the RLS test actually tests something" has the same procedure.
+`npm run e2e -- e2e/rls-isolation.spec.js` must now **fail**. Then re-enable and
+it must pass again. Do NOT use `drop policy` -- with RLS on and no policy the
+table is deny-all, so the spec stays green while the app is broken.
 
-### Loose end 2: turn "Allow new users to sign up" off?
-The E2E suite no longer depends on it (accounts are made by hand), so nothing
-blocks this. Decide whether the app is still open to new registrations.
+### Loose end 3: turn "Allow new users to sign up" off?
+The E2E suite no longer depends on it. Nothing blocks the decision.
+
+### Also worth a look, unrelated
+`.wolf/dashboard-token` is a tracked 64-hex-character file in a **public**
+repo. If it is a real credential it should be rotated, gitignored, and purged
+from history; if it is only a localhost nonce it should still not be committed.
 
 ### Watch item
-One intermediate full run failed 4 auth specs and took 1.2m instead of ~21s;
-the error text was overwritten before it was read, and six full runs since
-have passed 13/13. If it recurs, capture the failure output -- the suite makes
-~15 sign-in calls per run and Supabase rate-limits the token endpoint per IP,
-which is the first thing to check.
-
+One intermediate full run once failed 4 auth specs and took 1.2m instead of
+~21s; the error text was overwritten before it was read, and every run since
+has passed 13/13. Suspected per-IP rate limiting on the token endpoint.
 ### Closed decisions
 - Accounts are created by hand, never by the suite. Sign-up is the only auth
   path that touches Supabase's email system; avoiding it removes the
@@ -124,3 +158,9 @@ which is the first thing to check.
 - Issue #2's third acceptance criterion ("fails if an own-rows policy is
   removed") was NOT amended in the issue text -- the correction was recorded in
   the close-out comment and in README instead, since the issue is now closed.
+- Hermetic gates go in `ci.yml`; anything touching Supabase goes in
+  `nightly.yml`. Never add credentials to `ci.yml` -- keeping it secret-free is
+  what makes it safe on fork PRs and unable to flake.
+- `enforce_admins: false` on `main`: the owner's direct push still works. That
+  is the escape hatch for `.wolf/` bookkeeping churn, and it means the
+  protection is a guardrail, not a wall.
