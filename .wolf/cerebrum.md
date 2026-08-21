@@ -30,3 +30,16 @@
 ## Decision Log
 
 <!-- Significant technical decisions with rationale. Why X was chosen over Y. -->
+
+### Lint stack (2026-08-21)
+
+- **`@stylistic/eslint-plugin`, NOT `@stylistic/eslint-plugin-js`.** The js-only
+  package is deprecated upstream; the unified one replaces it. Namespace is
+  `@stylistic/*` (no `/js`).
+- **Gotcha when migrating:** the unified plugin (v5) defaults `indent`'s
+  `SwitchCase` to `1`; the js-only v4 defaulted to `0`. `eslint.config.js` pins
+  `{ 'SwitchCase': 0 }` explicitly so the switch statements in `src/lib/errors.js`
+  and `src/utils/periods.js` keep their existing (unindented-case) style.
+  Do not "clean up" that option — removing it reformats 48 lines for no reason.
+- User's standing preference: when a tool is deprecated, swap the tool, do NOT
+  let the swap change the enforced code style.

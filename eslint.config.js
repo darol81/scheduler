@@ -1,5 +1,5 @@
 import globals from 'globals'
-import stylisticJs from '@stylistic/eslint-plugin-js'
+import stylistic from '@stylistic/eslint-plugin'
 import js from '@eslint/js'
 
 export default [
@@ -17,22 +17,25 @@ export default [
       },
     },
     plugins: {
-      '@stylistic/js': stylisticJs,
+      '@stylistic': stylistic,
     },
     rules: {
-      '@stylistic/js/indent': [
+      '@stylistic/indent': [
         'error',
-        2
+        2,
+        // unified @stylistic defaults SwitchCase to 1; the js-only plugin this
+        // config migrated from defaulted to 0. Pinned so the style is unchanged.
+        { 'SwitchCase': 0 }
       ],
-      '@stylistic/js/linebreak-style': [
+      '@stylistic/linebreak-style': [
         'error',
         'unix'
       ],
-      '@stylistic/js/quotes': [
+      '@stylistic/quotes': [
         'error',
         'single'
       ],
-      '@stylistic/js/semi': [
+      '@stylistic/semi': [
         'error',
         'never'
       ],

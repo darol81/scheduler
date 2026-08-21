@@ -13,6 +13,21 @@
         "vitest",
         "testing-library"
       ]
+    },
+    {
+      "date": "2026-08-21",
+      "error_message": "[@stylistic/eslint-plugin-js] This package is deprecated in favor of the unified @stylistic/eslint-plugin, please consider migrating to the main package",
+      "file": "eslint.config.js",
+      "root_cause": "The js-only stylistic plugin (v4) was archived upstream in favour of the unified @stylistic/eslint-plugin. Migrating renames the namespace @stylistic/js/* -> @stylistic/*, and the unified v5 changed one default: indent SwitchCase 0 -> 1, which then flagged 48 pre-existing switch statements in src/lib/errors.js and src/utils/periods.js.",
+      "fix": "npm uninstall @stylistic/eslint-plugin-js; npm i -D @stylistic/eslint-plugin (5.10.0). Renamed the plugin key to @stylistic and all four rule prefixes. Pinned { SwitchCase: 0 } on @stylistic/indent so the enforced style is byte-identical to before - zero source files reformatted. lint clean, 106/106 tests, build ok.",
+      "tags": [
+        "eslint",
+        "stylistic",
+        "deprecation",
+        "lint-config"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-08-21"
     }
   ]
 }
