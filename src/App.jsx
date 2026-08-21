@@ -13,6 +13,7 @@ import EntriesPage from './pages/EntriesPage'
 import GoalsPage from './pages/GoalsPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import SettingsPage from './pages/SettingsPage'
 
 import { isSupabaseConfigured, supabase } from './lib/supabaseClient'
 import { loadSession, sessionChanged } from './store/authSlice'
@@ -71,6 +72,7 @@ export default function App() {
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/goals" element={<GoalsPage />} />
             <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

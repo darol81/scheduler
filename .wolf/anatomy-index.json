@@ -1,12 +1,12 @@
 {
   "version": 1,
   "meta": {
-    "lastScanned": "2026-08-21T10:30:05.022Z",
-    "fileCount": 59,
+    "lastScanned": "2026-08-21T11:32:56.619Z",
+    "fileCount": 63,
     "hits": 0,
     "misses": 0,
-    "renderedHash": "eecb22d07b0451899de4e2b95316d90ff3eb39fb34f09b39c5cf39181f2e3e50",
-    "storeUpdatedAt": "2026-08-21T10:30:05.029Z"
+    "renderedHash": "5d0f7cfee0cd53d21dc858bf2c55730baed209c9b6c77c16b7afcca02721634f",
+    "storeUpdatedAt": "2026-08-21T11:32:56.626Z"
   },
   "files": {
     ".claude/commands/designqc.md": {
@@ -65,11 +65,11 @@
     },
     "CLAUDE.md": {
       "description": "CLAUDE.md",
-      "tokens": 1535,
-      "hash": "fc222a942df9e5fd",
-      "size": 6168,
-      "mtimeMs": 1787308204705.9966,
-      "updatedAt": "2026-08-21T10:30:05.022Z",
+      "tokens": 1786,
+      "hash": "936cb8145e0eb303",
+      "size": 7176,
+      "mtimeMs": 1787311976341.321,
+      "updatedAt": "2026-08-21T11:32:56.619Z",
       "source": "hook"
     },
     "index.html": {
@@ -245,12 +245,12 @@
     },
     "src/components/Layout.jsx": {
       "description": "NAV_ITEMS",
-      "tokens": 677,
-      "hash": "f0b3de5d4f6becba",
-      "size": 2369,
-      "mtimeMs": 1787229503653.0642,
-      "updatedAt": "2026-08-20T12:58:12.926Z",
-      "source": "scan",
+      "tokens": 800,
+      "hash": "6302ec2ff90a5ebb",
+      "size": 2797,
+      "mtimeMs": 1787311814537.651,
+      "updatedAt": "2026-08-21T11:30:14.834Z",
+      "source": "hook",
       "symbols": [
         {
           "name": "navClass",
@@ -263,8 +263,8 @@
           "name": "Layout",
           "kind": "fn",
           "startLine": 20,
-          "endLine": 64,
-          "tokens": 480
+          "endLine": 76,
+          "tokens": 620
         }
       ]
     },
@@ -551,61 +551,61 @@
     },
     "src/store/authSlice.js": {
       "description": "Register with an email and a password.",
-      "tokens": 1476,
-      "hash": "79cd38b0769f3b41",
-      "size": 5165,
-      "mtimeMs": 1787229390732.9329,
-      "updatedAt": "2026-08-20T12:58:12.930Z",
-      "source": "scan",
+      "tokens": 2557,
+      "hash": "3331b15d6f962a3c",
+      "size": 8947,
+      "mtimeMs": 1787311750736.099,
+      "updatedAt": "2026-08-21T11:29:11.054Z",
+      "source": "hook",
       "symbols": [
         {
           "name": "sessionFulfilled",
           "kind": "fn",
-          "startLine": 69,
-          "endLine": 75,
-          "tokens": 52
+          "startLine": 140,
+          "endLine": 146,
+          "tokens": 51
         },
         {
           "name": "credentialsRejected",
           "kind": "fn",
-          "startLine": 76,
-          "endLine": 132,
-          "tokens": 562
+          "startLine": 147,
+          "endLine": 213,
+          "tokens": 694
         },
         {
           "name": "selectSession",
           "kind": "fn",
-          "startLine": 133,
-          "endLine": 133,
+          "startLine": 214,
+          "endLine": 214,
           "tokens": 17
         },
         {
           "name": "selectUser",
           "kind": "fn",
-          "startLine": 134,
-          "endLine": 134,
-          "tokens": 16
+          "startLine": 215,
+          "endLine": 215,
+          "tokens": 15
         },
         {
           "name": "selectAuthStatus",
           "kind": "fn",
-          "startLine": 135,
-          "endLine": 135,
+          "startLine": 216,
+          "endLine": 216,
           "tokens": 18
         },
         {
           "name": "selectAuthError",
           "kind": "fn",
-          "startLine": 136,
-          "endLine": 136,
+          "startLine": 217,
+          "endLine": 217,
           "tokens": 17
         },
         {
           "name": "selectIsSignedIn",
           "kind": "fn",
-          "startLine": 137,
-          "endLine": 140,
-          "tokens": 31
+          "startLine": 218,
+          "endLine": 221,
+          "tokens": 30
         }
       ]
     },
@@ -739,12 +739,35 @@
     },
     "src/store/index.js": {
       "description": "Factory so tests can build a store with preloaded state; the app itself uses",
-      "tokens": 469,
-      "hash": "b62a8bb21f90ae87",
-      "size": 1641,
-      "mtimeMs": 1787229400781.776,
-      "updatedAt": "2026-08-20T12:58:12.931Z",
-      "source": "scan"
+      "tokens": 636,
+      "hash": "d80dfd2343c8168b",
+      "size": 2223,
+      "mtimeMs": 1787311713330.1091,
+      "updatedAt": "2026-08-21T11:28:33.623Z",
+      "source": "hook",
+      "symbols": [
+        {
+          "name": "hasPassword",
+          "kind": "fn",
+          "startLine": 19,
+          "endLine": 24,
+          "tokens": 75
+        },
+        {
+          "name": "redactPasswords",
+          "kind": "fn",
+          "startLine": 25,
+          "endLine": 34,
+          "tokens": 83
+        },
+        {
+          "name": "createAppStore",
+          "kind": "fn",
+          "startLine": 35,
+          "endLine": 66,
+          "tokens": 309
+        }
+      ]
     },
     "src/store/selectors.js": {
       "description": "Entries whose entry_date falls inside an inclusive { from, to } range.",
@@ -1048,6 +1071,88 @@
       "size": 2612,
       "mtimeMs": 1787308147376.008,
       "updatedAt": "2026-08-21T10:29:07.658Z",
+      "source": "hook"
+    },
+    "src/components/ChangePasswordForm.jsx": {
+      "description": "The change-password card on /settings.",
+      "tokens": 1993,
+      "hash": "97bcf1c1b88c6343",
+      "size": 6973,
+      "mtimeMs": 1787311775927.0557,
+      "updatedAt": "2026-08-21T11:29:36.247Z",
+      "source": "hook",
+      "symbols": [
+        {
+          "name": "ChangePasswordForm",
+          "kind": "fn",
+          "startLine": 20,
+          "endLine": 197,
+          "tokens": 1802
+        }
+      ]
+    },
+    "src/pages/SettingsPage.jsx": {
+      "description": "Home for anything account-scoped. Password only for now; the Preferences",
+      "tokens": 334,
+      "hash": "f655e2e0af3f57fa",
+      "size": 1169,
+      "mtimeMs": 1787311783954.0083,
+      "updatedAt": "2026-08-21T11:29:44.264Z",
+      "source": "hook"
+    },
+    "src/test/settings.test.jsx": {
+      "description": "Same wholesale mock as auth.test.jsx, and for the same reason: store/index.js",
+      "tokens": 2260,
+      "hash": "476b3fe419f74f7f",
+      "size": 7909,
+      "mtimeMs": 1787311907041.9463,
+      "updatedAt": "2026-08-21T11:31:47.369Z",
+      "source": "hook",
+      "symbols": [
+        {
+          "name": "renderSettings",
+          "kind": "fn",
+          "startLine": 32,
+          "endLine": 39,
+          "tokens": 53
+        },
+        {
+          "name": "type",
+          "kind": "fn",
+          "startLine": 40,
+          "endLine": 46,
+          "tokens": 48
+        },
+        {
+          "name": "fillValidForm",
+          "kind": "fn",
+          "startLine": 47,
+          "endLine": 52,
+          "tokens": 50
+        },
+        {
+          "name": "allCallsSucceed",
+          "kind": "fn",
+          "startLine": 53,
+          "endLine": 58,
+          "tokens": 80
+        },
+        {
+          "name": "submit",
+          "kind": "fn",
+          "startLine": 59,
+          "endLine": 216,
+          "tokens": 1688
+        }
+      ]
+    },
+    "e2e/settings.spec.js": {
+      "description": "Nothing here ever changes a password, and that is deliberate on two counts.",
+      "tokens": 1037,
+      "hash": "4f9a307ef92082d4",
+      "size": 3627,
+      "mtimeMs": 1787311936172.7595,
+      "updatedAt": "2026-08-21T11:32:16.488Z",
       "source": "hook"
     }
   },

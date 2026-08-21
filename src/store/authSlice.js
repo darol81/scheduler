@@ -69,6 +69,70 @@ export const signOut = createAsyncThunk('auth/signOut', async (_, { rejectWithVa
 })
 
 /**
+ * Change the account password.
+ *
+ * GoTrue's PUT /user does not ask for the old password, so without a check of
+ * our own an unlocked, signed-in browser is a two-click account takeover. We
+ * re-authenticate by spending the current password on the token endpoint. That
+ * is a real sign-in: supabase-js saves the returned session over the current
+ * one and fires SIGNED_IN, which App.jsx maps to sessionChanged. Same user id,
+ * so the per-userId fetch effect there does not refire.
+ *
+ * The order is load-bearing.
+ *   - updateUser goes second, so a rejected new password leaves nothing revoked.
+ *   - signOut goes last, so it also takes out the refresh token that the
+ *     re-auth above orphaned.
+ *   - scope: 'others' revokes every other device but keeps this tab and fires
+ *     no SIGNED_OUT, unlike the 'local' scope the signOut thunk uses. 'global'
+ *     would sign this tab out and bounce the user to /login mid-success.
+ */
+export const changePassword = createAsyncThunk(
+  'auth/changePassword',
+  async ({ currentPassword, password }, { getState, rejectWithValue }) => {
+    const user = getState().auth.user
+    const email = user && user.email
+    if (!email) return rejectWithValue('Your session expired. Please sign in again.')
+
+    const { error: reauthError } = await supabase.auth.signInWithPassword({
+      email,
+      password: currentPassword,
+    })
+    if (reauthError) {
+      // Not friendlyAuthError's invalid_credentials wording. That one is vague
+      // on purpose so /login cannot be used as an account-existence oracle;
+      // here we are already signed in as the account in question, so there is
+      // nothing to leak, and "Wrong email or password." would name a field
+      // this form does not even have.
+      if (reauthError.code === 'invalid_credentials') {
+        return rejectWithValue('That is not your current password.')
+      }
+      return rejectWithValue(friendlyAuthError(reauthError, 'Could not verify your password.'))
+    }
+
+    const { error: updateError } = await supabase.auth.updateUser({ password })
+    if (updateError) {
+      return rejectWithValue(friendlyAuthError(updateError, 'Could not change the password.'))
+    }
+
+    // Past this line the password IS changed. Nothing below may report a plain
+    // failure, or the user retypes an old password that no longer works.
+    const { error: revokeError } = await supabase.auth.signOut({ scope: 'others' })
+    if (revokeError) {
+      return rejectWithValue(
+        'Your password was changed, but signing out your other devices failed. '
+        + 'Sign out on them yourself if that matters.',
+      )
+    }
+
+    // Nothing to hand the store: supabase-js saved the session itself and
+    // App.jsx's listener already dispatched sessionChanged for both SIGNED_IN
+    // and USER_UPDATED. Returning null also keeps this action off the
+    // serializableCheck allowlist in store/index.js.
+    return null
+  },
+)
+
+/**
  * Both credential thunks land here on success. supabase-js has already saved
  * the session and notified onAuthStateChange by this point, so this is really
  * just closing the one-tick window before that listener fires.
@@ -132,6 +196,16 @@ const authSlice = createSlice({
         state.user = null
       })
       .addCase(signOut.rejected, credentialsRejected)
+      .addCase(changePassword.pending, (state) => {
+        state.error = null
+      })
+      // Not sessionFulfilled: its first line is `state.session = payload ?? null`
+      // and this thunk resolves with null, so reusing it would sign the user out
+      // of the store while supabase-js still holds a perfectly good session.
+      .addCase(changePassword.fulfilled, (state) => {
+        state.error = null
+      })
+      .addCase(changePassword.rejected, credentialsRejected)
   },
 })
 

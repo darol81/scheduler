@@ -31,7 +31,7 @@ That is the only required step; the Email provider is on by default.
 
 Worth ten more seconds on the same page:
 - raise **Minimum password length** from `6` to `10` (keep it in step with
-  `MIN_PASSWORD_LENGTH` in `src/components/AuthForm.jsx`) — this is the only
+  `MIN_PASSWORD_LENGTH` in `src/lib/password.js`) — this is the only
   enforced floor, since anyone can call the auth endpoint directly;
 - confirm **Google** shows as disabled.
 

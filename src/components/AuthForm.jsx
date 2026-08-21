@@ -2,6 +2,7 @@ import { useEffect, useId, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Navigate, useLocation } from 'react-router-dom'
 import ErrorBanner from './ErrorBanner'
+import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../lib/password'
 import Spinner from './Spinner'
 import {
   clearAuthError,
@@ -12,22 +13,8 @@ import {
   signUp,
 } from '../store/authSlice'
 
-/**
- * Keep this at or above the "Minimum password length" set in the Supabase
- * dashboard (Authentication -> Sign In / Providers -> Email). If it drops
- * below, the form waves through passwords the server then rejects.
- *
- * This check is ergonomics, not security: anyone can call the auth endpoint
- * directly with the anon key from this page's source. The dashboard setting is
- * the only floor that is actually enforced.
- */
-export const MIN_PASSWORD_LENGTH = 10
-
 // Deliberately loose -- GoTrue is the real validator, this only catches typos.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-// bcrypt truncates past 72 bytes, and GoTrue rejects longer input outright.
-const MAX_PASSWORD_LENGTH = 72
 
 /**
  * The sign-in and register cards. One component, two routes: password managers

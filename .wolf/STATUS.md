@@ -80,7 +80,7 @@
   every PR and every push to `main`. Hermetic -- no Supabase, no secrets -- so
   it cannot flake and it works on fork PRs. Green in 22s on its own PR.
 - `.github/workflows/nightly.yml`: `17 2 * * *` + `workflow_dispatch`. Same
-  checks plus the 13 Playwright specs. Verified by dispatch: with no secrets
+  checks plus the Playwright specs (13 at the time, 17 now). Verified by dispatch: with no secrets
   set, `preflight` succeeds and `e2e` is **skipped**, with a `::notice::`
   saying why.
 - The issue #2 objection is answered by `concurrency: { group: supabase-e2e,
@@ -96,11 +96,32 @@
 - `CONTRIBUTING.md` + `.github/pull_request_template.md` + README §4 +
   a `## Git workflow` section in `CLAUDE.md`.
 
+**Settings page + change password (this session)** -- GitHub issue #6
+- New `/settings` route: an Account card, `ChangePasswordForm`, and a
+  marked-out Preferences card for the date-format setting later.
+- Header: the avatar+email became a `Link` to `/settings` with an explicit
+  `aria-label` -- the email span is hidden below `sm:` and the avatar is
+  `aria-hidden`, so without it the link would be unnamed on a phone. Sign out
+  is untouched.
+- `changePassword` thunk: verify the current password via `signInWithPassword`
+  (GoTrue's `updateUser` never asks for it, so an unlocked browser would
+  otherwise be a two-click takeover) -> `updateUser` -> `signOut({ scope:
+  'others' })`. `'others'` is verified to keep this tab's session and fire no
+  SIGNED_OUT; `'global'` would bounce the user to /login on success.
+- Anything failing after `updateUser` rejects with "your password was changed,
+  but..." rather than a plain failure -- the password really did change.
+- `MIN/MAX_PASSWORD_LENGTH` moved to `src/lib/password.js` (was private to
+  `AuthForm.jsx`); CLAUDE.md, README.md and manual_work_todo.md repointed.
+- The DevTools action sanitizer in `store/index.js` now matches any key name
+  containing "password", not the literal key `password` -- otherwise
+  `currentPassword` sat in the action log in clear text.
+- 128 unit tests (was 106), 17 E2E (was 13), lint clean.
+
 ---
 
 ## 🚀 Next phase
 
-**Goal:** Three loose ends, none of them large.
+**Goal:** Loose ends, none of them large.
 
 ### Loose end 1: turn the nightly on (2 min, needs the user)
 The e2e job skips itself until these exist:
@@ -109,7 +130,7 @@ gh secret set VITE_SUPABASE_URL
 gh secret set VITE_SUPABASE_ANON_KEY
 gh secret set E2E_PASSWORD
 ```
-Then `gh workflow run nightly.yml && gh run watch` and confirm 13/13 on a
+Then `gh workflow run nightly.yml && gh run watch` and confirm 17/17 on a
 runner. E2E_EMAIL_A/B are deliberately NOT secrets -- the defaults in
 `e2e/helpers/env.js` already match the allowlist in `supabase/e2e.sql`.
 
@@ -134,6 +155,16 @@ The E2E suite no longer depends on it. Nothing blocks the decision.
 `.wolf/dashboard-token` is a tracked 64-hex-character file in a **public**
 repo. If it is a real credential it should be rotated, gitignored, and purged
 from history; if it is only a localhost nonce it should still not be committed.
+
+### Not verified: the change-password happy path against real Supabase
+The failure paths are covered end-to-end (`e2e/settings.spec.js`, 4 specs), and
+the happy path including `scope: 'others'` is covered against a mocked client in
+`authSlice.test.js`. A real end-to-end password change was deliberately NOT run:
+it would change the shared E2E account's password, and the suite is
+`fullyParallel` with both workers signed in as ACCOUNT_A, so the
+`signOut({ scope: 'others' })` would revoke the other worker's token mid-run.
+To check it by hand, use a personal account, and confirm the other-device
+revocation with a second browser profile.
 
 ### Watch item
 One intermediate full run once failed 4 auth specs and took 1.2m instead of
