@@ -93,6 +93,12 @@
 
 ## Do-Not-Repeat
 
+- **[2026-08-21] `Closes #N` must be in the PR *body*, not the commit message.**
+  The repo squash-merges with `squash_merge_commit_message=PR_BODY`, so the
+  branch's commit messages are discarded. Issue #6 stayed open after PR #7
+  merged because the keyword was only in the commit. `CONTRIBUTING.md` already
+  says to put it in the PR body -- follow it.
+
 <!-- Mistakes made and corrected. Each entry prevents the same mistake recurring. -->
 <!-- Format: [YYYY-MM-DD] Description of what went wrong and what to do instead. -->
 
