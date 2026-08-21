@@ -92,13 +92,25 @@ go in this file -- it would ship to every visitor and bypass those policies.
 ### 3.1 Unit tests
 
 ```bash
-npm test           # single run
+npm test              # single run
 npm run test:watch
+npm run test:coverage # same run, plus a coverage report
 ```
 
 These never touch the network. They cover the parts with real logic: duration
 parsing, period boundaries (Monday-start weeks, month ends), and goal-progress
 aggregation.
+
+`test:coverage` prints a per-file summary and writes a browsable report to
+`coverage/index.html`, plus `coverage/lcov.info` for anything that wants to read
+it mechanically. The directory is gitignored. Plain `npm test` is left
+uninstrumented, so it stays as quick as it was.
+
+Read the numbers with the split in mind: the pure functions and the forms are
+well covered, while the slices' thunks and the table-heavy pages are mostly
+exercised through the Playwright suite instead, which this report cannot see. A
+low number there means "covered elsewhere", not "untested" — but `App.jsx` and
+`ProtectedRoute.jsx` at zero are the real gaps.
 
 ### 3.2 End-to-end tests
 

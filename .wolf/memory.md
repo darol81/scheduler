@@ -82,3 +82,5 @@
 | 14:32 | Created e2e/settings.spec.js | — | ~1037 |
 | 14:32 | Edited CLAUDE.md | expanded (+12 lines) | ~358 |
 | 14:35 | Settings page + change-password flow (issue #6) | src/pages/SettingsPage.jsx, src/components/ChangePasswordForm.jsx, authSlice | 128 unit + 17 e2e green; happy path unverified against real Supabase by design | ~90k |
+| 15:04 | Edited vite.config.js | expanded (+19 lines) | ~235 |
+| 15:05 | Edited README.md | expanded (+12 lines) | ~249 |
