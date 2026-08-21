@@ -64,13 +64,23 @@
   `e2e/helpers/backend.js` so `npm run e2e:reset` cannot do it mid-run either.
   A button labelled just "Sign out" should not end the session on your phone.
 
+**Issue #2 closed (this session)**
+- Re-verified before closing: `npm run e2e` 13/13 in 26.7s, `npm test` 106/106,
+  `eslint .` clean. Wrote the close-out comment on GitHub issue #2 (what was
+  built, the decisions that diverged from the proposal, the signOut bug) and
+  closed it as completed.
+- Two criteria were closed with an explicit note rather than silently: the CI
+  workflow is deliberately not done (one shared Supabase project, concurrent
+  runs would race on the two fixed accounts), and the manual RLS negative
+  control has still not been run -- see below.
+
 ---
 
 ## 🚀 Next phase
 
-**Goal:** Close out issue #2 -- one acceptance criterion left, and it is manual.
+**Goal:** No open ticket. Two loose ends, both cheap.
 
-### Remaining: prove the RLS spec is not vacuous
+### Loose end 1: prove the RLS spec is not vacuous (manual, ~2 min)
 In the Supabase SQL editor:
 
 ```sql
@@ -82,10 +92,15 @@ alter table public.categories enable row level security;    -- expect PASS
 ```
 and it must pass again. Do NOT use `drop policy` for this -- with RLS on and no
 policy the table is deny-all, so the spec stays green while the app is broken.
+README §"Proving the RLS test actually tests something" has the same procedure.
+
+### Loose end 2: turn "Allow new users to sign up" off?
+The E2E suite no longer depends on it (accounts are made by hand), so nothing
+blocks this. Decide whether the app is still open to new registrations.
 
 ### Watch item
 One intermediate full run failed 4 auth specs and took 1.2m instead of ~21s;
-the error text was overwritten before it was read, and five full runs since
+the error text was overwritten before it was read, and six full runs since
 have passed 13/13. If it recurs, capture the failure output -- the suite makes
 ~15 sign-in calls per run and Supabase rate-limits the token endpoint per IP,
 which is the first thing to check.
@@ -96,16 +111,16 @@ which is the first thing to check.
   confirmation-mail, email-rate-limit and allow-signups dependencies at once.
 - No `service_role` key anywhere in the suite. The reset RPC is safe because it
   can only ever touch the caller's own rows.
-- Chromium only; no CI workflow for now (one shared Supabase project means
-  concurrent runs would race).
+- Chromium only. ~~No CI workflow for now (one shared Supabase project means
+  concurrent runs would race).~~ **Superseded by issue #3:** the objection only
+  ever applied to the E2E suite, so the hermetic gates (lint, 106 unit tests,
+  build) run on every PR in `ci.yml`, and the Playwright suite runs nightly in
+  `nightly.yml` behind `concurrency: { group: supabase-e2e,
+  cancel-in-progress: false }`, which makes two overlapping runs impossible.
 - Per-test UI sign-in rather than a shared `storageState`: the session key is
   `sb-<project-ref>-auth-token`, so a saved state file silently couples to one
   project, and `autoRefreshToken` makes two workers race on one refresh token.
 - Sign-out is local-scope, not global (see the bug above).
-
-### Open decisions
-- Whether to amend GitHub issue #2's acceptance criterion, which as written
-  ("the RLS spec fails if an own-rows policy is removed") describes a check
-  that would pass while proving nothing.
-- Whether to turn "Allow new users to sign up" off. The E2E suite no longer
-  depends on it, so nothing blocks this now.
+- Issue #2's third acceptance criterion ("fails if an own-rows policy is
+  removed") was NOT amended in the issue text -- the correction was recorded in
+  the close-out comment and in README instead, since the issue is now closed.

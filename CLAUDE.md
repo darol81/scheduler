@@ -31,6 +31,19 @@ setup file `src/test/setup.js` which only pulls in `@testing-library/jest-dom/vi
 
 Vite reads `.env.local` only at startup — restart the dev server after editing it.
 
+## Git workflow
+
+**Never commit to `main`.** It is branch-protected and will reject the push. Every change
+goes: issue → branch → pull request → green `checks` → squash merge. Branches are named
+`<type>/<issue number>-<slug>` (`feat`, `fix`, `chore`, `docs`), e.g.
+`chore/3-ci-and-branching`. Put `Closes #N` in the PR body. Commit subjects stay short,
+lower case and plain — no `feat:` prefixes; only the squashed PR title reaches `main`.
+
+`.github/workflows/ci.yml` runs `lint` + `test` + `build` on every PR and is hermetic —
+never add Supabase credentials to it. `.github/workflows/nightly.yml` owns the Playwright
+suite, because it mutates the two shared test accounts; its E2E job skips itself when the
+secrets are absent. `CONTRIBUTING.md` is the full version.
+
 ## Style (enforced by eslint.config.js)
 
 No semicolons, single quotes, 2-space indent, unix linebreaks, `eqeqeq`,

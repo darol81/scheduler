@@ -61,3 +61,11 @@
 
 | Time | Action | File(s) | Outcome | ~Tokens |
 |------|--------|---------|---------|--------|
+
+## Session: 2026-08-21 13:06
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 13:07 | Verified E2E suite (13/13), commented + closed GitHub issue #2 | .wolf/STATUS.md, GitHub #2 | Issue closed as completed; manual RLS negative control still pending | ~25k |
+| 13:29 | Edited playwright.config.js | expanded (+8 lines) | ~179 |
+| 13:30 | Edited CLAUDE.md | expanded (+13 lines) | ~238 |

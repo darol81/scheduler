@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-08-21T08:43:31.146Z
-> Files: 58 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-08-21T10:30:05.022Z
+> Files: 59 tracked | Anatomy hits: 0 | Misses: 0
 
 > Project structure index. Auto-maintained by OpenWolf hooks and daemon.
 > Run `openwolf scan` to generate, or wait for the first Claude Code session.
@@ -10,12 +10,13 @@
 ## ./
 
 - `.gitignore` — Git ignore rules (~26 tok)
-- `CLAUDE.md` — OpenWolf (~143 tok)
+- `CLAUDE.md` — CLAUDE.md (~1535 tok)
 - `index.html` — Worktime Scheduler (~82 tok)
 - `manual_work_todo.md` (~730 tok)
 - `other.md` (~28 tok)
 - `package-lock.json` — npm lock file (~32154 tok)
 - `package.json` — Node.js package manifest (~229 tok)
+- `playwright.config.js` (~747 tok)
 - `README.md` — Project documentation (~1696 tok)
 - `vite.config.js` — Vite build configuration (~85 tok)
 

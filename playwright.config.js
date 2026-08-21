@@ -11,10 +11,18 @@ export default defineConfig({
   // itself, so this is really a cap on how hard GoTrue's token endpoint gets
   // hit. Raise it only alongside a storageState setup project.
   workers: 2,
-  retries: 0,
+  // Stays at one retry on CI rather than zero: the only failure this suite has
+  // ever shown on a green codebase looked like GoTrue rate-limiting the token
+  // endpoint, which a retry absorbs, and it is what finally makes the
+  // `trace: 'on-first-retry'` below produce anything.
+  retries: process.env.CI ? 1 : 0,
+  // A stray test.only would otherwise narrow the nightly run in silence.
+  forbidOnly: Boolean(process.env.CI),
   timeout: 60000,
   expect: { timeout: 10000 },
-  reporter: [['list'], ['html', { open: 'never' }]],
+  reporter: process.env.CI
+    ? [['github'], ['list'], ['html', { open: 'never' }]]
+    : [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL,
     // The app's idea of "today" comes from browser local time (todayKey() and

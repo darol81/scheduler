@@ -1,12 +1,12 @@
 {
   "version": 1,
   "meta": {
-    "lastScanned": "2026-08-21T08:43:31.146Z",
-    "fileCount": 58,
+    "lastScanned": "2026-08-21T10:30:05.022Z",
+    "fileCount": 59,
     "hits": 0,
     "misses": 0,
-    "renderedHash": "009034f6f8fbf62ccc39c2a5ef0ee57128e5fde0e56cfd73738a66dff7a7c220",
-    "storeUpdatedAt": "2026-08-21T08:43:31.154Z"
+    "renderedHash": "eecb22d07b0451899de4e2b95316d90ff3eb39fb34f09b39c5cf39181f2e3e50",
+    "storeUpdatedAt": "2026-08-21T10:30:05.029Z"
   },
   "files": {
     ".claude/commands/designqc.md": {
@@ -64,13 +64,13 @@
       "source": "scan"
     },
     "CLAUDE.md": {
-      "description": "OpenWolf",
-      "tokens": 143,
-      "hash": "baf970620ace797b",
-      "size": 571,
-      "mtimeMs": 1787230692742.6785,
-      "updatedAt": "2026-08-20T12:58:12.922Z",
-      "source": "scan"
+      "description": "CLAUDE.md",
+      "tokens": 1535,
+      "hash": "fc222a942df9e5fd",
+      "size": 6168,
+      "mtimeMs": 1787308204705.9966,
+      "updatedAt": "2026-08-21T10:30:05.022Z",
+      "source": "hook"
     },
     "index.html": {
       "description": "Worktime Scheduler",
@@ -1040,6 +1040,15 @@
           "tokens": 612
         }
       ]
+    },
+    "playwright.config.js": {
+      "description": "",
+      "tokens": 747,
+      "hash": "5a75acb512ab99ef",
+      "size": 2612,
+      "mtimeMs": 1787308147376.008,
+      "updatedAt": "2026-08-21T10:29:07.658Z",
+      "source": "hook"
     }
   },
   "preamble": [
