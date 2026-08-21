@@ -84,10 +84,23 @@ it more specific.
 
 **Auth routing.** `/login` and `/register` are separate routes (not one toggling page) so
 password managers key off the URL and `autocomplete` can be `current-password` vs
-`new-password`. `MIN_PASSWORD_LENGTH` in `src/components/AuthForm.jsx` is a convenience check
+`new-password`. `MIN_PASSWORD_LENGTH` / `MAX_PASSWORD_LENGTH` live in `src/lib/password.js`
+so the sign-up and change-password forms cannot drift apart; the min is a convenience check
 only — the enforced floor is the Supabase dashboard setting; keep the two in step.
 `ProtectedRoute` sanitises the post-login redirect against protocol-relative paths.
 `ReportsPage` is `lazy()`-loaded because Recharts is the heaviest dependency.
+
+**Changing a password** (`changePassword` in `authSlice`, used by `/settings`). GoTrue's
+`updateUser` does *not* ask for the old password, so the thunk spends the current one on a
+real `signInWithPassword` first — without that, an unlocked signed-in browser is a two-click
+account takeover. Order matters: verify, then `updateUser`, then
+`signOut({ scope: 'others' })`, which revokes every other device *and* the token the re-auth
+just orphaned while keeping this tab. `'global'` would sign the current tab out and bounce
+the user to `/login` the instant they succeeded. Anything failing after `updateUser` must not
+report a plain failure — the password did change, and saying otherwise sends the user back to
+retype one that no longer works. A wrong current password reports that specifically: the
+account-existence oracle concern above applies to `/login`, not to a page you must already be
+signed in to reach.
 
 **Durations and dates.** No live timer. `src/utils/duration.js` is the only place that knows
 the input notation (`1h 20min`, `90m`, `1,5h`, Finnish `t` for hours) and everything is stored

@@ -47,7 +47,7 @@ Worth the extra ten seconds, on that same page:
   enforced floor -- the check in the sign-up form is a convenience, and anyone
   can call the auth endpoint directly with the anon key from the page source.
   Keep it in step with `MIN_PASSWORD_LENGTH` in
-  [`src/components/AuthForm.jsx`](src/components/AuthForm.jsx).
+  [`src/lib/password.js`](src/lib/password.js).
 - **Google**: confirm the provider is **disabled**. Nothing points at it any
   more, and an enabled provider is a live sign-in path whether or not the UI
   offers it.

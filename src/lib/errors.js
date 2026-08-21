@@ -35,6 +35,13 @@ export function friendlyAuthError(error, fallback = 'Something went wrong. Pleas
     return 'Could not reach the server. Check your connection.'
   }
 
+  // Also code-less: thrown client-side when the call needed a session and there
+  // was none. Without this the switch below falls through to error.message and
+  // shows "Auth session missing!" verbatim.
+  if (error.name === 'AuthSessionMissingError') {
+    return 'Your session expired. Please sign in again.'
+  }
+
   switch (error.code) {
   case 'invalid_credentials':
     // Deliberately vague. GoTrue returns one undifferentiated error for both
@@ -44,6 +51,18 @@ export function friendlyAuthError(error, fallback = 'Something went wrong. Pleas
   case 'user_already_exists':
   case 'email_exists':
     return 'That email is already registered. Sign in instead.'
+  case 'same_password':
+    return 'That is already your password. Choose a different one.'
+  case 'reauthentication_needed':
+  case 'reauthentication_not_valid':
+    // "Secure password change" is on in the Supabase dashboard, which wants a
+    // code mailed to the address. This app verifies the current password
+    // instead and never configures SMTP, so the two cannot both be on.
+    return 'This project requires an emailed code to change a password. '
+      + 'Turn off "Secure password change" in the Supabase dashboard.'
+  case 'session_expired':
+  case 'session_not_found':
+    return 'Your session expired. Please sign in again.'
   case 'weak_password':
     // GoTrue says exactly why -- too short, missing a character class, or
     // found in a breach -- and its wording is better than anything here.

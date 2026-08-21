@@ -70,3 +70,15 @@
 | 13:29 | Edited playwright.config.js | expanded (+8 lines) | ~179 |
 | 13:30 | Edited CLAUDE.md | expanded (+13 lines) | ~238 |
 | 13:35 | CI + nightly workflows, branch protection, CONTRIBUTING | .github/, CONTRIBUTING.md, playwright.config.js | issue #3 closed via PR #4; nightly skips until secrets set | ~60k |
+| 13:49 | Session end: 2 writes across 2 files (playwright.config.js, CLAUDE.md) | 13 reads | ~6940 tok |
+| 14:28 | Edited src/store/index.js | modified hasPassword() | ~386 |
+| 14:29 | Edited src/store/authSlice.js | added 5 condition(s) | ~908 |
+| 14:29 | Edited src/store/authSlice.js | added nullish coalescing | ~185 |
+| 14:29 | Created src/components/ChangePasswordForm.jsx | — | ~1993 |
+| 14:29 | Created src/pages/SettingsPage.jsx | — | ~334 |
+| 14:30 | Edited src/components/Layout.jsx | CSS: hover | ~278 |
+| 14:30 | Edited src/components/Layout.jsx | inline fix | ~16 |
+| 14:31 | Created src/test/settings.test.jsx | — | ~2260 |
+| 14:32 | Created e2e/settings.spec.js | — | ~1037 |
+| 14:32 | Edited CLAUDE.md | expanded (+12 lines) | ~358 |
+| 14:35 | Settings page + change-password flow (issue #6) | src/pages/SettingsPage.jsx, src/components/ChangePasswordForm.jsx, authSlice | 128 unit + 17 e2e green; happy path unverified against real Supabase by design | ~90k |

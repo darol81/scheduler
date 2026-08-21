@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-08-21T10:30:05.022Z
-> Files: 59 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-08-21T11:32:56.619Z
+> Files: 63 tracked | Anatomy hits: 0 | Misses: 0
 
 > Project structure index. Auto-maintained by OpenWolf hooks and daemon.
 > Run `openwolf scan` to generate, or wait for the first Claude Code session.
@@ -10,7 +10,7 @@
 ## ./
 
 - `.gitignore` — Git ignore rules (~26 tok)
-- `CLAUDE.md` — CLAUDE.md (~1535 tok)
+- `CLAUDE.md` — CLAUDE.md (~1786 tok)
 - `index.html` — Worktime Scheduler (~82 tok)
 - `manual_work_todo.md` (~730 tok)
 - `other.md` (~28 tok)
@@ -34,6 +34,10 @@
 
 - `openwolf.md` (~251 tok)
 
+## e2e/
+
+- `settings.spec.js` — Nothing here ever changes a password, and that is deliberate on two counts. (~1037 tok)
+
 ## e2e/helpers/
 
 - `env.js` — Load the suite's configuration and publish it on process.env. (~704 tok)
@@ -49,12 +53,13 @@
 - `AuthForm.jsx` — Keep this at or above the "Minimum password length" set in the Supabase (~2825 tok)
 - `CategoryDot.jsx` — CategoryDot (~73 tok)
 - `CategorySelect.jsx` — Plain <select> over the user's active categories. (~296 tok)
+- `ChangePasswordForm.jsx` — The change-password card on /settings. (~1993 tok)
 - `DurationInput.jsx` — Free-text duration field. Keeps the raw string locally, parses on every (~606 tok)
 - `DurationInput.test.jsx` — setup (~571 tok)
 - `EmptyState.jsx` — EmptyState (~125 tok)
 - `ErrorBanner.jsx` — ErrorBanner (~142 tok)
 - `GoalProgressBar.jsx` — One goal, its target and how far the current period has got. (~454 tok)
-- `Layout.jsx` — NAV_ITEMS (~677 tok)
+- `Layout.jsx` — NAV_ITEMS (~800 tok)
 - `LogTimeForm.jsx` — The main way time gets into the app: pick a category and a day, then type how (~1171 tok)
 - `ProtectedRoute.jsx` — ProtectedRoute (~248 tok)
 - `SetupNotice.jsx` — Shown instead of the app when .env.local has no Supabase credentials, so the (~563 tok)
@@ -76,15 +81,16 @@
 - `LoginPage.jsx` — LoginPage (~36 tok)
 - `RegisterPage.jsx` — RegisterPage (~37 tok)
 - `ReportsPage.jsx` — Recharts hands us minutes; humans want "1h 20min". (~3117 tok)
+- `SettingsPage.jsx` — Home for anything account-scoped. Password only for now; the Preferences (~334 tok)
 
 ## src/store/
 
-- `authSlice.js` — Register with an email and a password. (~1476 tok)
+- `authSlice.js` — Register with an email and a password. (~2557 tok)
 - `authSlice.test.js` — Mock every export: store/index.js pulls in the data slices, which import (~1546 tok)
 - `categoriesSlice.js` — Archiving is the normal way to retire a category: entries keep pointing at it, (~1419 tok)
 - `entriesSlice.js` — Redux slice: entries (~1308 tok)
 - `goalsSlice.js` — One goal per (category, period): re-saving the same pair updates the target (~944 tok)
-- `index.js` — Factory so tests can build a store with preloaded state; the app itself uses (~469 tok)
+- `index.js` — Factory so tests can build a store with preloaded state; the app itself uses (~636 tok)
 - `selectors.js` — Entries whose entry_date falls inside an inclusive { from, to } range. (~1600 tok)
 - `selectors.test.js` — Declares REFERENCE (~1408 tok)
 
@@ -92,6 +98,7 @@
 
 - `auth.test.jsx` — SIGNED_OUT (~1922 tok)
 - `pages.test.jsx` — TEACHING (~1227 tok)
+- `settings.test.jsx` — Same wholesale mock as auth.test.jsx, and for the same reason: store/index.js (~2260 tok)
 - `setup.js` (~13 tok)
 
 ## src/utils/

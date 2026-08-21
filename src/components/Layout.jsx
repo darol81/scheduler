@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet } from 'react-router-dom'
 import { selectUser, signOut } from '../store/authSlice'
 
 const NAV_ITEMS = [
@@ -39,15 +39,27 @@ export default function Layout() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <span
-              aria-hidden="true"
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700"
+            {/*
+              The email is hidden below sm: and the avatar is decorative, so the
+              link carries its own name rather than relying on visible text --
+              otherwise it would be an unnamed link on a phone. Both spans stay
+              aria-hidden so the address is not announced twice.
+            */}
+            <Link
+              to="/settings"
+              aria-label={`Settings, signed in as ${email}`}
+              className="flex items-center gap-3 rounded-lg px-2 py-1 transition hover:bg-slate-100"
             >
-              {initial}
-            </span>
-            {/* The email is hidden below sm:, so keep it announced either way. */}
-            <span className="sr-only">Signed in as {email}</span>
-            <span className="hidden text-sm text-slate-500 sm:inline">{email}</span>
+              <span
+                aria-hidden="true"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700"
+              >
+                {initial}
+              </span>
+              <span aria-hidden="true" className="hidden text-sm text-slate-500 sm:inline">
+                {email}
+              </span>
+            </Link>
             <button type="button" className="btn-secondary" onClick={() => dispatch(signOut())}>
               Sign out
             </button>
