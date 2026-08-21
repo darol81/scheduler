@@ -2,18 +2,18 @@
   "version": 1,
   "created_at": "2026-08-20T12:58:12.734Z",
   "lifetime": {
-    "total_tokens_estimated": 39930,
-    "total_reads": 40,
-    "total_writes": 1,
-    "anatomy_hits": 34,
-    "anatomy_misses": 2,
+    "total_tokens_estimated": 46870,
+    "total_reads": 53,
+    "total_writes": 3,
+    "anatomy_hits": 39,
+    "anatomy_misses": 10,
     "repeated_reads_blocked": 0,
     "estimated_savings_vs_bare_cli": 0,
-    "real_input_tokens": 284,
-    "real_output_tokens": 149890,
-    "real_cache_read_tokens": 15418902,
-    "real_cache_creation_tokens": 317445,
-    "real_api_calls": 142,
+    "real_input_tokens": 478,
+    "real_output_tokens": 216141,
+    "real_cache_read_tokens": 27178897,
+    "real_cache_creation_tokens": 460919,
+    "real_api_calls": 239,
     "total_sessions": 12
   },
   "sessions": [
@@ -339,6 +339,121 @@
         "cache_read_input_tokens": 9693206,
         "cache_creation_input_tokens": 186959,
         "api_calls": 67
+      }
+    },
+    {
+      "id": "session-2026-08-21-1306",
+      "agent": "claude",
+      "started": "2026-08-21T10:06:43.172Z",
+      "ended": "2026-08-21T10:45:08.826Z",
+      "reads": [
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/package.json",
+          "tokens_estimated": 334,
+          "was_repeated": false,
+          "anatomy_had_description": true
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/vite.config.js",
+          "tokens_estimated": 184,
+          "was_repeated": false,
+          "anatomy_had_description": true
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/e2e/helpers/env.js",
+          "tokens_estimated": 589,
+          "was_repeated": false,
+          "anatomy_had_description": true
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/e2e/global-setup.js",
+          "tokens_estimated": 199,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/e2e/reset.js",
+          "tokens_estimated": 175,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/e2e/helpers/accounts.js",
+          "tokens_estimated": 826,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/e2e/helpers/backend.js",
+          "tokens_estimated": 842,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/README.md",
+          "tokens_estimated": 968,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/e2e/fixtures.js",
+          "tokens_estimated": 388,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/src/lib/supabaseClient.js",
+          "tokens_estimated": 0,
+          "was_repeated": false,
+          "anatomy_had_description": true
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/supabase/e2e.sql",
+          "tokens_estimated": 827,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/eslint.config.js",
+          "tokens_estimated": 506,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/.claude/settings.json",
+          "tokens_estimated": 668,
+          "was_repeated": false,
+          "anatomy_had_description": true
+        }
+      ],
+      "writes": [
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/playwright.config.js",
+          "tokens_estimated": 179,
+          "action": "edit"
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/CLAUDE.md",
+          "tokens_estimated": 255,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 6506,
+        "output_tokens_estimated": 434,
+        "reads_count": 13,
+        "writes_count": 2,
+        "repeated_reads_blocked": 0,
+        "anatomy_lookups": 5,
+        "anatomy_misses": 8,
+        "savings_estimated": 0
+      },
+      "real_usage": {
+        "input_tokens": 194,
+        "output_tokens": 66251,
+        "cache_read_input_tokens": 11759995,
+        "cache_creation_input_tokens": 143474,
+        "api_calls": 97
       }
     }
   ],
