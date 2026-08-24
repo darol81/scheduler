@@ -1,0 +1,12 @@
+# Cloudflare Pages SPA fallback.
+#
+# src/main.jsx mounts a BrowserRouter, so /entries, /reports, /settings and the
+# rest are client-side paths with no file behind them. Without this rule a
+# direct hit or a hard refresh on any of them returns 404 from the edge and the
+# app never boots.
+#
+# Pages matches a real static asset before it consults this file, so the
+# content-hashed files under /assets/ -- including the lazily loaded Recharts
+# chunk that /reports pulls in -- are served normally and are not swallowed by
+# the wildcard.
+/*    /index.html   200

@@ -2,19 +2,19 @@
   "version": 1,
   "created_at": "2026-08-20T12:58:12.734Z",
   "lifetime": {
-    "total_tokens_estimated": 69371,
-    "total_reads": 68,
-    "total_writes": 13,
-    "anatomy_hits": 57,
-    "anatomy_misses": 10,
+    "total_tokens_estimated": 76720,
+    "total_reads": 79,
+    "total_writes": 20,
+    "anatomy_hits": 65,
+    "anatomy_misses": 13,
     "repeated_reads_blocked": 0,
     "estimated_savings_vs_bare_cli": 0,
-    "real_input_tokens": 610,
-    "real_output_tokens": 278124,
-    "real_cache_read_tokens": 44005357,
-    "real_cache_creation_tokens": 737038,
-    "real_api_calls": 305,
-    "total_sessions": 12
+    "real_input_tokens": 382,
+    "real_output_tokens": 180564,
+    "real_cache_read_tokens": 19307116,
+    "real_cache_creation_tokens": 391252,
+    "real_api_calls": 191,
+    "total_sessions": 16
   },
   "sessions": [
     {
@@ -345,17 +345,11 @@
       "id": "session-2026-08-21-1306",
       "agent": "claude",
       "started": "2026-08-21T10:06:43.172Z",
-      "ended": "2026-08-21T11:36:55.711Z",
+      "ended": "2026-08-24T08:35:43.396Z",
       "reads": [
         {
           "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/package.json",
           "tokens_estimated": 334,
-          "was_repeated": false,
-          "anatomy_had_description": true
-        },
-        {
-          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/vite.config.js",
-          "tokens_estimated": 184,
           "was_repeated": false,
           "anatomy_had_description": true
         },
@@ -386,12 +380,6 @@
         {
           "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/e2e/helpers/backend.js",
           "tokens_estimated": 842,
-          "was_repeated": false,
-          "anatomy_had_description": false
-        },
-        {
-          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/README.md",
-          "tokens_estimated": 968,
           "was_repeated": false,
           "anatomy_had_description": false
         },
@@ -576,24 +564,157 @@
           "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/CLAUDE.md",
           "tokens_estimated": 384,
           "action": "edit"
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/vite.config.js",
+          "tokens_estimated": 235,
+          "action": "edit"
+        },
+        {
+          "file": "C:/Users/topi_/OmatJutut/Yliopisto/ClaudeAI/scheduler/README.md",
+          "tokens_estimated": 266,
+          "action": "edit"
         }
       ],
       "totals": {
-        "input_tokens_estimated": 21226,
-        "output_tokens_estimated": 8215,
-        "reads_count": 28,
-        "writes_count": 12,
+        "input_tokens_estimated": 20074,
+        "output_tokens_estimated": 8716,
+        "reads_count": 26,
+        "writes_count": 14,
         "repeated_reads_blocked": 0,
         "anatomy_lookups": 23,
         "anatomy_misses": 8,
         "savings_estimated": 0
+      }
+    },
+    {
+      "id": "session-2026-08-24-1145",
+      "agent": "claude",
+      "started": "2026-08-24T08:45:21.247Z",
+      "ended": "2026-08-24T09:14:13.993Z",
+      "reads": [
+        {
+          "file": "e:/Projects/Scheduler/package.json",
+          "tokens_estimated": 370,
+          "was_repeated": false,
+          "anatomy_had_description": true
+        },
+        {
+          "file": "e:/Projects/Scheduler/vite.config.js",
+          "tokens_estimated": 403,
+          "was_repeated": true,
+          "anatomy_had_description": true
+        },
+        {
+          "file": "e:/Projects/Scheduler/.gitignore",
+          "tokens_estimated": 38,
+          "was_repeated": false,
+          "anatomy_had_description": true
+        },
+        {
+          "file": "e:/Projects/Scheduler/src/lib/supabaseClient.js",
+          "tokens_estimated": 365,
+          "was_repeated": true,
+          "anatomy_had_description": true
+        },
+        {
+          "file": "e:/Projects/Scheduler/.env.example",
+          "tokens_estimated": 424,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "e:/Projects/Scheduler/index.html",
+          "tokens_estimated": 82,
+          "was_repeated": false,
+          "anatomy_had_description": true
+        },
+        {
+          "file": "e:/Projects/Scheduler/src/App.jsx",
+          "tokens_estimated": 0,
+          "was_repeated": false,
+          "anatomy_had_description": true
+        },
+        {
+          "file": "e:/Projects/Scheduler/src/main.jsx",
+          "tokens_estimated": 126,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "e:/Projects/Scheduler/.github/workflows/ci.yml",
+          "tokens_estimated": 372,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "e:/Projects/Scheduler/.github/workflows/nightly.yml",
+          "tokens_estimated": 1281,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "e:/Projects/Scheduler/playwright.config.js",
+          "tokens_estimated": 747,
+          "was_repeated": false,
+          "anatomy_had_description": true
+        },
+        {
+          "file": "e:/Projects/Scheduler/e2e/helpers/env.js",
+          "tokens_estimated": 589,
+          "was_repeated": false,
+          "anatomy_had_description": true
+        },
+        {
+          "file": "e:/Projects/Scheduler/manual_work_todo.md",
+          "tokens_estimated": 1151,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "e:/Projects/Scheduler/public/_redirects",
+          "tokens_estimated": 161,
+          "action": "create"
+        },
+        {
+          "file": "e:/Projects/Scheduler/public/_headers",
+          "tokens_estimated": 341,
+          "action": "create"
+        },
+        {
+          "file": "e:/Projects/Scheduler/.node-version",
+          "tokens_estimated": 1,
+          "action": "create"
+        },
+        {
+          "file": "e:/Projects/Scheduler/README.md",
+          "tokens_estimated": 87,
+          "action": "edit"
+        },
+        {
+          "file": "e:/Projects/Scheduler/README.md",
+          "tokens_estimated": 1462,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 5948,
+        "output_tokens_estimated": 2052,
+        "reads_count": 13,
+        "writes_count": 5,
+        "repeated_reads_blocked": 0,
+        "anatomy_lookups": 8,
+        "anatomy_misses": 3,
+        "savings_estimated": 0
       },
       "real_usage": {
-        "input_tokens": 326,
-        "output_tokens": 128234,
-        "cache_read_input_tokens": 28586455,
-        "cache_creation_input_tokens": 419593,
-        "api_calls": 163
+        "input_tokens": 98,
+        "output_tokens": 30674,
+        "cache_read_input_tokens": 3888214,
+        "cache_creation_input_tokens": 73807,
+        "api_calls": 49
       }
     }
   ],

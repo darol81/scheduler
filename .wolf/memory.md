@@ -84,3 +84,29 @@
 | 14:35 | Settings page + change-password flow (issue #6) | src/pages/SettingsPage.jsx, src/components/ChangePasswordForm.jsx, authSlice | 128 unit + 17 e2e green; happy path unverified against real Supabase by design | ~90k |
 | 15:04 | Edited vite.config.js | expanded (+19 lines) | ~235 |
 | 15:05 | Edited README.md | expanded (+12 lines) | ~249 |
+| 11:35 | Session end: 14 writes across 11 files (playwright.config.js, CLAUDE.md, index.js, authSlice.js, ChangePasswordForm.jsx) | 26 reads | ~28790 tok |
+
+## Session: 2026-08-24 11:36
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-08-24 11:38
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-08-24 11:43
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-08-24 11:45
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 11:54 | Created public/_redirects | — | ~150 |
+| 11:54 | Created public/_headers | — | ~318 |
+| 11:54 | Created .node-version | — | ~1 |
+| 11:54 | Edited README.md | 3→6 lines | ~82 |
+| 11:55 | Edited README.md | expanded (+100 lines) | ~1365 |

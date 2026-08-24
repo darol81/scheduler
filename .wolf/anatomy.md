@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-08-21T12:05:14.658Z
-> Files: 63 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-08-24T08:55:16.466Z
+> Files: 66 tracked | Anatomy hits: 0 | Misses: 0
 
 > Project structure index. Auto-maintained by OpenWolf hooks and daemon.
 > Run `openwolf scan` to generate, or wait for the first Claude Code session.
@@ -10,6 +10,7 @@
 ## ./
 
 - `.gitignore` — Git ignore rules (~26 tok)
+- `.node-version` (~1 tok)
 - `CLAUDE.md` — CLAUDE.md (~1786 tok)
 - `index.html` — Worktime Scheduler (~82 tok)
 - `manual_work_todo.md` (~730 tok)
@@ -17,7 +18,7 @@
 - `package-lock.json` — npm lock file (~32154 tok)
 - `package.json` — Node.js package manifest (~229 tok)
 - `playwright.config.js` (~747 tok)
-- `README.md` — Project documentation (~3178 tok)
+- `README.md` — Project documentation (~4416 tok)
 - `vite.config.js` — /*.{test,spec}.{js,jsx}'], (~403 tok)
 
 ## .claude/
@@ -41,6 +42,11 @@
 ## e2e/helpers/
 
 - `env.js` — Load the suite's configuration and publish it on process.env. (~704 tok)
+
+## public/
+
+- `_headers` — Response headers for the Cloudflare Pages deploy. Vite copies public/ to the (~318 tok)
+- `_redirects` — Cloudflare Pages SPA fallback. (~150 tok)
 
 ## src/
 
