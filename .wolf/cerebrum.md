@@ -91,6 +91,50 @@
   The default `cancel-in-progress: true` would be actively wrong here: it would
   kill the run already talking to Supabase in favour of the newcomer.
 
+- **Cloudflare Access protects the site origin, not the Supabase API.**
+  The browser talks to `<project-ref>.supabase.co` directly -- a different
+  hostname that never passes through the Pages/Access edge. So gating the site
+  with Access hides the UI but leaves every Supabase endpoint reachable by
+  anyone who lifts the anon key out of the bundle (which is public by design).
+  RLS still confines them to their own rows, but an open signup endpoint lets
+  them create those rows. **Closing signups is a Supabase toggle, and it is the
+  control that actually does the work**; Access is defence in depth on top.
+  Generalises: any "lock down the deployment" request has to name which origin
+  it is locking, and this app has two.
+
+- **Closing signups needs no code change.** `friendlyAuthError`
+  (`src/lib/errors.js`) already maps `signup_disabled` / `email_provider_disabled`
+  to "New registrations are closed.", with a test in `src/lib/errors.test.js`.
+  Flipping **Allow new users to sign up** off in Supabase leaves `/register`
+  mounted and rendering normally -- it just reports that registrations are shut.
+  Nobody needs to rip the route out to lock the app down.
+
+- **Pages "Preview access" gates previews ONLY, and quietly creates a Zero Trust org.**
+  *Settings -> General -> Preview access* protects `<hash>.<project>.pages.dev`
+  and explicitly not the production `pages.dev` host -- Cloudflare's own UI says
+  so. Enabling it provisioned `scheduler-7u8-pages.cloudflareaccess.com` without
+  the usual Zero Trust billing step, which is why an unexpected Access PIN email
+  arrived. Production needs a *separate* self-hosted application under Zero
+  Trust. Measure which is which with `curl -L` and watch for a 302 to
+  `.cloudflareaccess.com/cdn-cgi/access/login/` -- do not trust the dashboard's
+  prose.
+
+- **A deployed Vite app can be audited without asking for any credentials.**
+  Every `VITE_*` value is inlined into the bundle and served publicly by design,
+  so `scratchpad/probe-live.sh` scrapes the Supabase URL and anon key straight
+  out of `/assets/index-*.js` and probes the auth API with them. Useful twice
+  over: it verifies a Supabase-side toggle really took at the API level (the
+  browser only proves the UI renders the mapping), and a `200` from
+  `/auth/v1/health` doubles as proof the Pages environment variables are live.
+  Always probe health *before* the real test, or a mistyped key looks exactly
+  like a successful lockdown.
+
+- **Pages appends a suffix when the project name is taken.** Production here is
+  `scheduler-7u8.pages.dev`, not `scheduler.pages.dev`. Anything that names the
+  host -- an Access application, a Supabase Site URL, a redirect allowlist --
+  must use the real one, so read it off the project rather than deriving it from
+  the project name.
+
 ## Do-Not-Repeat
 
 - **[2026-08-21] `Closes #N` must be in the PR *body*, not the commit message.**
@@ -120,6 +164,17 @@
   installs its own, and a deleted-but-uncommitted lockfile is still whatever git
   has. The recovery is `git restore package-lock.json` + `npm ci`, never a
   hand-rebuild. Reach for `npm install` only when `package.json` genuinely changed.
+
+- **[2026-08-24] Cloudflare's `Create application` is a *Workers* wizard by default.**
+  The heading reads "Create a Worker". It makes **Deploy command** and an **API
+  token** mandatory, and the build then fails because `npx wrangler deploy` wants
+  a `wrangler.jsonc`/`wrangler.toml` this repo does not have. Pages is
+  `Create application -> **Pages** tab -> Connect to Git`: no deploy command, no
+  API token, just build command + output directory. Pages is NOT deprecated.
+  Tell-tale that you are in the wrong wizard: a Deploy command or API token
+  field is present. (The Workers route is viable too -- static assets support
+  `_headers`/`_redirects` natively plus `not_found_handling:
+  "single-page-application"` -- but it needs that config file committed first.)
 
 <!-- Mistakes made and corrected. Each entry prevents the same mistake recurring. -->
 <!-- Format: [YYYY-MM-DD] Description of what went wrong and what to do instead. -->
