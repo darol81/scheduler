@@ -77,6 +77,40 @@
       ],
       "occurrences": 2,
       "last_seen": "2026-08-21"
+    },
+    {
+      "date": "2026-08-24",
+      "error_message": "npm ci fails: `npm ci` can only install packages when your package.json and package-lock.json are in sync. Missing: @vitest/ui@4.1.11 from lock file (plus its deps fflate, sirv, @polka/url, mrmime, totalist).",
+      "file": "package-lock.json",
+      "root_cause": "@vitest/ui was added to package.json devDependencies during the coverage-reporter work (commits fc0f967 / 10c9b93) without re-running npm install, so the lockfile was never regenerated and the two drifted. Nothing local caught it: node_modules was already populated and `npm run build` never consults the lock. Every clean install did break -- ci.yml and nightly.yml both run `npm ci`, and Cloudflare Pages runs `npm clean-install`, so the deploy could not have built until this was fixed.",
+      "fix": "Ran `npm install` to regenerate package-lock.json, then verified `npm ci` succeeds from the synced lock. lint clean, 128 unit tests pass, build clean. Rule: any package.json dependency edit must be followed by `npm install`, with the lockfile committed in the same change.",
+      "tags": [
+        "npm",
+        "lockfile",
+        "ci",
+        "build",
+        "cloudflare-pages",
+        "dependencies"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-08-24"
+    },
+    {
+      "date": "2026-08-24",
+      "error_message": "fatal: unable to access 'https://github.com/darol81/scheduler.git/': SSL certificate problem: unable to get local issuer certificate (on git push / ls-remote)",
+      "file": "git global config (not a repo file)",
+      "root_cause": "Git for Windows 2.46 defaults to the OpenSSL TLS backend, which trusts only its own bundled ca-bundle.crt. Something on this machine terminates and re-signs HTTPS (antivirus TLS inspection or a network appliance), presenting a root certificate that lives in the Windows certificate store but not in Git's bundle, so the chain could not be built. Nothing was wrong with the repo, the remote or the credentials.",
+      "fix": "Confirmed the diagnosis non-destructively with `git -c http.sslBackend=schannel ls-remote origin HEAD`, which succeeded, then made it permanent: `git config --global http.sslBackend schannel`. schannel makes Git use the Windows certificate store. Do NOT reach for `http.sslVerify false` -- that disables verification outright instead of fixing trust.",
+      "tags": [
+        "git",
+        "windows",
+        "tls",
+        "ssl",
+        "push",
+        "schannel"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-08-24"
     }
   ]
 }

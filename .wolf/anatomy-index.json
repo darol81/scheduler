@@ -1,12 +1,12 @@
 {
   "version": 1,
   "meta": {
-    "lastScanned": "2026-08-21T12:05:14.658Z",
-    "fileCount": 63,
+    "lastScanned": "2026-08-24T08:55:16.466Z",
+    "fileCount": 66,
     "hits": 0,
     "misses": 0,
-    "renderedHash": "5b7f2c6a7f96752d40f2b3380093fb5a45341702962b5c8e18d06313a5cb7974",
-    "storeUpdatedAt": "2026-08-21T12:05:14.665Z"
+    "renderedHash": "7b43335bca2710e47a82a5811782cc962c8fdebecd86af847e5ee131202d3255",
+    "storeUpdatedAt": "2026-08-24T08:55:16.482Z"
   },
   "files": {
     ".claude/commands/designqc.md": {
@@ -119,11 +119,11 @@
     },
     "README.md": {
       "description": "Project documentation",
-      "tokens": 3178,
-      "hash": "8647d868ac43ccda",
-      "size": 12718,
-      "mtimeMs": 1787313914327.8303,
-      "updatedAt": "2026-08-21T12:05:14.657Z",
+      "tokens": 4416,
+      "hash": "cb7e167d886e065c",
+      "size": 17670,
+      "mtimeMs": 1787561716163.3242,
+      "updatedAt": "2026-08-24T08:55:16.465Z",
       "source": "hook"
     },
     "src/App.jsx": {
@@ -1153,6 +1153,33 @@
       "size": 3627,
       "mtimeMs": 1787311936172.7595,
       "updatedAt": "2026-08-21T11:32:16.488Z",
+      "source": "hook"
+    },
+    "public/_redirects": {
+      "description": "Cloudflare Pages SPA fallback.",
+      "tokens": 150,
+      "hash": "9e177b7bf3525c53",
+      "size": 561,
+      "mtimeMs": 1787561660663.5227,
+      "updatedAt": "2026-08-24T08:54:21.326Z",
+      "source": "hook"
+    },
+    "public/_headers": {
+      "description": "Response headers for the Cloudflare Pages deploy. Vite copies public/ to the",
+      "tokens": 318,
+      "hash": "111417ad28297eea",
+      "size": 1192,
+      "mtimeMs": 1787561669091.1487,
+      "updatedAt": "2026-08-24T08:54:30.043Z",
+      "source": "hook"
+    },
+    ".node-version": {
+      "description": "",
+      "tokens": 1,
+      "hash": "68ca3fba3b7e8647",
+      "size": 3,
+      "mtimeMs": 1787561673504.4255,
+      "updatedAt": "2026-08-24T08:54:33.796Z",
       "source": "hook"
     }
   },

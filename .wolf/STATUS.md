@@ -2,7 +2,7 @@
 
 > Single source of truth for resuming work. Read this FIRST when starting a session.
 > Update this file at the end of every work phase so the next `/clear` resumes in 1 read.
-> Last updated: 2026-08-21
+> Last updated: 2026-08-24
 
 ---
 
@@ -117,13 +117,87 @@
   `currentPassword` sat in the action log in clear text.
 - 128 unit tests (was 106), 17 E2E (was 13), lint clean.
 
+**Cloudflare Pages deploy prep (2026-08-24)**
+- Branch `chore/cloudflare-pages` **pushed 2026-08-24** and tracking
+  `origin/chore/cloudflare-pages`. Pushed under the un-numbered name: no issue
+  existed yet and `gh` is installed but NOT authenticated, so the issue and PR
+  still have to be opened by hand. Prepared PR body sits in the scratchpad as
+  `PR_BODY.md`.
+- Pushing first needed a TLS fix: Git for Windows' bundled OpenSSL CA bundle
+  could not build the chain (something re-signs HTTPS on this machine).
+  `git config --global http.sslBackend schannel` set, which uses the Windows
+  certificate store. See buglog 2026-08-24.
+- New `public/_redirects` (`/* /index.html 200`) -- `src/main.jsx` mounts a
+  `BrowserRouter`, so without it a bookmark or hard refresh on `/entries`,
+  `/reports`, `/settings` 404s at the edge. Pages matches real assets first, so
+  the hashed `/assets/*` files (including the lazy Recharts chunk) are unaffected.
+- New `public/_headers`: nosniff, `X-Frame-Options: DENY`, referrer policy,
+  `Permissions-Policy`, `COOP`, plus `max-age=31536000, immutable` on
+  `/assets/*` only -- `index.html` stays revalidating or a deploy reaches nobody.
+- New `.node-version` = `24`, matching both workflows. Vite 8 needs Node
+  `^20.19 || >=22.12`; the Pages default is older and the build would fail.
+- `README.md` `## Deploying` rewritten from three sentences to the full
+  Cloudflare click-path; `manual_work_todo.md` gained a step 5 with the same.
+- **`package-lock.json` regenerated.** `@vitest/ui` was in `package.json` but
+  never in the lock, so `npm ci` refused to install -- meaning `ci.yml`,
+  `nightly.yml` and Pages' `npm clean-install` were all broken while local
+  `build`/`dev` stayed green. See buglog 2026-08-24.
+- Verified locally: `npm ci` succeeds from the synced lock, `npm run build`
+  clean and both `_redirects` / `_headers` land at `dist/` root, lint clean,
+  128/128 unit tests. Nothing else in `src/`, `vite.config.js` or the workflows
+  was touched.
+
 ---
 
 ## 🚀 Next phase
 
-**Goal:** Loose ends, none of them large.
+**Goal:** Finish the Cloudflare deploy, then the pre-existing loose ends.
 
-### Loose end 1: turn the nightly on (2 min, needs the user)
+### Step 1: ship the deploy branch -- READY TO MERGE, awaiting the user's click
+- Issue **#11** `[Task] Host the app on Cloudflare Pages` (label `enhancement`).
+- PR **#10** `host the app on cloudflare pages`, `chore/cloudflare-pages` -> `main`.
+  The user had already opened it from the browser with the template's bare
+  `Closes #` placeholder; the body has been rewritten and now carries
+  `Closes #11` **in the body** (Do-Not-Repeat).
+- `checks` **green** (21s) and GitGuardian pass; `mergeStateStatus: CLEAN`. This
+  is the first green `npm ci` in a while -- the lockfile fix is what unblocked it.
+- Branch name keeps the un-numbered `chore/cloudflare-pages` rather than
+  CONTRIBUTING's `<type>/<issue>-<slug>`: the PR was already open against it, and
+  deleting the remote ref to rename would have closed the PR. Not worth the churn.
+- **Remaining: the user squash-merges #10.** Merging is deliberately left to them.
+- **The Cloudflare failure was NOT a repo problem**: `main` is still `10c9b93`
+  (pre-fix lockfile) and Pages builds the production branch as GitHub has it, so
+  it kept rebuilding code that predated the fix. Merging #10 is what fixes it.
+
+### Step 2: the Cloudflare + Supabase dashboard work (needs the user)
+Follow `manual_work_todo.md` step 5. **First confirm the project is a Pages
+project, not a Worker**: the user's dashboard showed a deploy command of
+`npx wrangler deploy`, which is a Workers field and would need a
+`wrangler.jsonc` this repo does not have. A Pages project has NO deploy command.
+The user chose to recreate it via Workers & Pages -> Create -> **Pages** tab ->
+Connect to Git. The short version:
+- Pages project: production branch `main`, preset Vite, build `npm run build`,
+  output `dist`, root `/`. No install command -- Pages runs `npm clean-install`.
+- `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` in **Production and Preview
+  both**. Missing them does not fail the build; the site just serves
+  `<SetupNotice />`. That is the first thing to check on a "working" deploy that
+  shows the wrong screen.
+- Build watch paths: exclude `.wolf/*`, or bookkeeping pushes rebuild production.
+- Supabase URL Configuration: Site URL `https://<project>.pages.dev`; redirect
+  URLs keep localhost and gain `https://<project>.pages.dev/**` plus
+  `https://*.<project>.pages.dev/**` (previews). Scope the wildcard to the
+  project subdomain.
+
+### Step 3: verify on the live URL
+Open `/settings` in a fresh tab and hard-refresh `/entries` (proves
+`_redirects`); load `/reports` and confirm its lazy chunk returns
+`text/javascript`, not `text/html`; then sign in and add an entry, which is the
+only real proof the env vars are wired. Then repeat the sign-in on a PR preview
+URL -- a failure there means the Preview-scope vars or the wildcard redirect URL
+is missing.
+
+### Still open from before
+#### Loose end 1: turn the nightly on (2 min, needs the user)
 The e2e job skips itself until these exist:
 ```bash
 gh secret set VITE_SUPABASE_URL
@@ -139,7 +213,7 @@ token limit is likelier to bite there than locally (~15 sign-ins per run). If
 the nightly shows rate-limit failures, the first lever is `workers: 1` on CI in
 `playwright.config.js`, not longer timeouts.
 
-### Loose end 2: prove the RLS spec is not vacuous (manual, ~2 min)
+#### Loose end 2: prove the RLS spec is not vacuous (manual, ~2 min)
 Still not done. In the Supabase SQL editor:
 ```sql
 alter table public.categories disable row level security;   -- expect FAIL
@@ -148,15 +222,15 @@ alter table public.categories disable row level security;   -- expect FAIL
 it must pass again. Do NOT use `drop policy` -- with RLS on and no policy the
 table is deny-all, so the spec stays green while the app is broken.
 
-### Loose end 3: turn "Allow new users to sign up" off?
+#### Loose end 3: turn "Allow new users to sign up" off?
 The E2E suite no longer depends on it. Nothing blocks the decision.
 
-### Also worth a look, unrelated
+#### Also worth a look, unrelated
 `.wolf/dashboard-token` is a tracked 64-hex-character file in a **public**
 repo. If it is a real credential it should be rotated, gitignored, and purged
 from history; if it is only a localhost nonce it should still not be committed.
 
-### Not verified: the change-password happy path against real Supabase
+#### Not verified: the change-password happy path against real Supabase
 The failure paths are covered end-to-end (`e2e/settings.spec.js`, 4 specs), and
 the happy path including `scope: 'others'` is covered against a mocked client in
 `authSlice.test.js`. A real end-to-end password change was deliberately NOT run:
@@ -166,7 +240,7 @@ it would change the shared E2E account's password, and the suite is
 To check it by hand, use a personal account, and confirm the other-device
 revocation with a second browser profile.
 
-### Watch item
+#### Watch item
 One intermediate full run once failed 4 auth specs and took 1.2m instead of
 ~21s; the error text was overwritten before it was read, and every run since
 has passed 13/13. Suspected per-IP rate limiting on the token endpoint.
@@ -192,6 +266,15 @@ has passed 13/13. Suspected per-IP rate limiting on the token endpoint.
 - Hermetic gates go in `ci.yml`; anything touching Supabase goes in
   `nightly.yml`. Never add credentials to `ci.yml` -- keeping it secret-free is
   what makes it safe on fork PRs and unable to flake.
+- Cloudflare Pages over the alternatives: the app is a static bundle with no
+  server of its own, and Pages' Git integration deploys on merge without a
+  deploy workflow or a `CLOUDFLARE_API_TOKEN` secret in the repo. Note Pages
+  does not wait for GitHub Actions -- previews build on red CI, and branch
+  protection is what keeps a failing PR out of production.
+- No CSP in `public/_headers`: Recharts writes inline style attributes, so a
+  useful policy needs `style-src 'unsafe-inline'` and verification against a
+  live deploy. No HSTS either -- `pages.dev` is already preloaded; it starts to
+  mean something with a custom domain.
 - `enforce_admins: false` on `main`: the owner's direct push still works. That
   is the escape hatch for `.wolf/` bookkeeping churn, and it means the
   protection is a guardrail, not a wall.

@@ -64,6 +64,9 @@ Under **Authentication -> URL Configuration**, set:
 - **Site URL**: `http://localhost:5173`
 - **Redirect URLs**: add `http://localhost:5173/**`
 
+That is the development entry. [Deploying](#deploying) adds the hosted origin
+alongside it -- the list holds both, so a deploy does not cost you local sign-in.
+
 ## 2. Run the app
 
 ```bash
@@ -300,8 +303,108 @@ appears for categories with nothing logged against them.
 
 ## Deploying
 
-When you host this somewhere other than localhost, add the new origin under
-Supabase **Authentication -> URL Configuration** (Site URL and Redirect URLs).
+There is no server to run. `npm run build` produces a directory of static files
+in `dist/`, and any static host will serve it; the browser talks to Supabase
+directly from there. These instructions are for **Cloudflare Pages**, which
+builds from the repository and redeploys on every merge to `main`.
 
-That is the whole list. There is no external identity provider to reconfigure,
-which is the main practical reason this app uses passwords rather than OAuth.
+### Cloudflare Pages project
+
+**Workers & Pages -> Create -> Pages -> Connect to Git**, pick this repository,
+then:
+
+| Setting | Value |
+|---|---|
+| Production branch | `main` |
+| Framework preset | Vite |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Root directory | `/` |
+
+Pages sees `package-lock.json` and runs `npm clean-install` itself, so there is
+no install command to set.
+
+### Environment variables
+
+Under **Settings -> Environment variables**, add the same two values that are in
+your `.env.local` -- to **Production and Preview both**:
+
+| Name | Value |
+|---|---|
+| `VITE_SUPABASE_URL` | `https://<project-ref>.supabase.co` |
+| `VITE_SUPABASE_ANON_KEY` | the `anon` / `sb_publishable_...` key |
+
+Leaving them out does not fail the build. Vite substitutes them at build time
+and `src/lib/supabaseClient.js` falls back to placeholders when they are absent,
+so the deploy succeeds and the site quietly shows the setup notice instead of
+the login screen -- which is the failure to look for first. (`.github/workflows/ci.yml`
+builds with no `VITE_*` vars on purpose, to keep that path proven.)
+
+The same rule as section 2 applies with more force here: never put an
+`sb_secret_...` / `service_role` key in these settings. It would be inlined into
+a bundle served to the public internet and would bypass every RLS policy.
+
+### Files in this repo that Pages reads
+
+Vite copies `public/` verbatim to the root of `dist/`, which is where the edge
+looks for the first two:
+
+- **`public/_redirects`** -- `/* /index.html 200`. `src/main.jsx` mounts a
+  `BrowserRouter`, so `/entries`, `/reports` and the rest are client-side paths
+  with no file behind them; without this rule a bookmark or a hard refresh
+  returns 404 from the edge. Pages matches a real asset first, so the hashed
+  files under `/assets/` still serve normally.
+- **`public/_headers`** -- `nosniff`, `X-Frame-Options: DENY`, a referrer policy,
+  and a year of immutable caching for the content-hashed `/assets/*`.
+  `index.html` is deliberately left revalidating. The file explains why there is
+  no CSP and no HSTS yet.
+- **`.node-version`** -- `24`, the same version both GitHub workflows pin. Vite 8
+  needs Node `^20.19 || >=22.12` and the Pages default is older, so without this
+  the build fails outright. If a build log still shows an old Node, set
+  `NODE_VERSION=24` as an environment variable as well.
+
+Worth setting **Settings -> Build -> Build watch paths -> Exclude** to `.wolf/*`:
+that directory is bookkeeping, and a push touching only it would otherwise
+trigger a full production rebuild of an unchanged bundle.
+
+### Supabase URL configuration
+
+Back in Supabase, **Authentication -> URL Configuration**:
+
+- **Site URL**: `https://<project>.pages.dev`
+- **Redirect URLs**: keep `http://localhost:5173/**`, and add
+  `https://<project>.pages.dev/**` and `https://*.<project>.pages.dev/**`
+
+The wildcard entry covers preview deployments, which Pages builds per branch at
+`<branch>.<project>.pages.dev`. Scope it to your own project subdomain -- a bare
+`https://*.pages.dev/**` would allowlist every site on Cloudflare Pages.
+
+Note that this is hygiene rather than a blocker: the allowlist gates links
+Supabase mails out and the fragment `detectSessionInUrl` reads, not
+`signInWithPassword`, and no code in `src/` passes a `redirectTo` anywhere. With
+email confirmation off (section 1.3) nothing currently sends such a link. It
+matters the day confirmation or a password-reset flow is turned on, and getting
+it right now costs nothing.
+
+There is no external identity provider to reconfigure, which is the main
+practical reason this app uses passwords rather than OAuth.
+
+### After the first deploy
+
+Worth two minutes on the live URL: open `/settings` directly in a fresh tab and
+hard-refresh on `/entries` (proves `_redirects`); load `/reports` and confirm in
+the network panel that its lazy chunk comes back as `text/javascript` rather
+than `text/html` (proves the wildcard is not swallowing assets); then sign in
+and add an entry, which is the only real proof the environment variables and
+Supabase are wired together.
+
+One thing to be aware of: Cloudflare does not wait for GitHub Actions. A preview
+deployment is built even when `ci.yml` is red -- branch protection on `main`, not
+Cloudflare, is what keeps a failing pull request out of production. Preview URLs
+are also public, so if **Allow new users to sign up** is still on in Supabase,
+turning it off is worth more once anything is hosted.
+
+Adding a custom domain later needs no code change: attach it under **Custom
+domains**, then make it the Supabase **Site URL** and leave the `pages.dev`
+entries in the redirect list. That is also the point at which adding
+`Strict-Transport-Security` to `public/_headers` starts to mean something.

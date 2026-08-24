@@ -99,10 +99,59 @@
   merged because the keyword was only in the commit. `CONTRIBUTING.md` already
   says to put it in the PR body -- follow it.
 
+- **[2026-08-24] Editing `package.json` deps without re-running `npm install`.**
+  `@vitest/ui` sat in `devDependencies` while `package-lock.json` never learnt
+  about it, so `npm ci` refused to install and `ci.yml`, `nightly.yml` and the
+  Cloudflare Pages build (`npm clean-install`) were all broken while
+  `npm run dev` / `npm run build` stayed green locally -- the lockfile is not
+  consulted by a build against a populated `node_modules`. Any dependency edit
+  ends with `npm install` and the regenerated lockfile in the same commit.
+
+- **[2026-08-24] A fix that is only committed locally fixes nothing on Cloudflare.**
+  Pages builds the *production branch as GitHub has it*. `7efad6c` regenerated
+  the lockfile but sat unpushed on `chore/cloudflare-pages`, so Pages kept
+  building `main` at `10c9b93` and kept reporting the same `npm ci` EUSAGE
+  error the commit had already fixed. Before debugging a deploy, check
+  `git log origin/<production branch>` -- not the local branch -- and confirm
+  the fix is actually in the tree being built.
+
+- **[2026-08-24] Deleting `node_modules` / `package-lock.json` does not "resync" anything.**
+  Both are invisible to the remote build: `node_modules` is gitignored and Pages
+  installs its own, and a deleted-but-uncommitted lockfile is still whatever git
+  has. The recovery is `git restore package-lock.json` + `npm ci`, never a
+  hand-rebuild. Reach for `npm install` only when `package.json` genuinely changed.
+
 <!-- Mistakes made and corrected. Each entry prevents the same mistake recurring. -->
 <!-- Format: [YYYY-MM-DD] Description of what went wrong and what to do instead. -->
 
 ## Decision Log
+
+### Hosting (2026-08-24)
+
+Cloudflare Pages, `*.pages.dev` subdomain, Git integration on `main`. The app is
+a pure static bundle, so the only host-specific artefacts are three files:
+`public/_redirects` (SPA fallback -- `BrowserRouter` means `/entries` etc. have no
+file behind them), `public/_headers` (nosniff / DENY / referrer policy, plus a
+year of immutable caching for the content-hashed `/assets/*`), and `.node-version`
+(`24`; Vite 8 needs >=20.19 and the Pages default is older). Vite copies `public/`
+verbatim into `dist/`, which is where the edge reads the first two.
+
+Deliberately no CSP: Recharts writes inline style attributes, so a real policy
+needs `style-src 'unsafe-inline'` and verification against a live deploy. No HSTS
+either -- `pages.dev` is already preloaded; it becomes meaningful with a custom
+domain.
+
+The two `VITE_*` vars must be set for **Production and Preview both** in Pages.
+Their absence does not fail the build -- `supabaseClient.js` falls back to
+placeholders and the site serves `<SetupNotice />`, which is the failure mode to
+check first on a deploy that "works" but shows the wrong screen.
+
+Supabase's Redirect-URL allowlist does not gate `signInWithPassword`, and nothing
+in `src/` passes a `redirectTo` anywhere, so widening it is hygiene for the day
+confirmations or password reset get switched on -- not a prerequisite for the
+deploy to authenticate. Scope the preview wildcard to
+`https://*.<project>.pages.dev/**`; a bare `https://*.pages.dev/**` would
+allowlist every site on the platform.
 
 <!-- Significant technical decisions with rationale. Why X was chosen over Y. -->
 

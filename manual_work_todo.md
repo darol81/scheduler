@@ -120,3 +120,60 @@ Then `npm run e2e`. Two accounts are needed because row level security is the
 thing under test: an isolation test with one account cannot tell a working
 policy from a broken one.
 
+
+---
+
+### 5. Deploy to Cloudflare Pages
+
+Only needed when you want the app hosted. Nothing in the repo depends on it;
+`npm run dev` is unaffected either way. README section "Deploying" is the full
+version -- this is the click path.
+
+1. **Create the project.** Cloudflare dashboard -> **Workers & Pages -> Create ->
+   Pages -> Connect to Git**, authorise the GitHub app, pick this repository.
+   Production branch `main`, framework preset **Vite**, build command
+   `npm run build`, output directory `dist`, root directory `/`. Leave the
+   install command empty -- Pages finds `package-lock.json` and runs
+   `npm clean-install` itself.
+
+2. **Add the two environment variables**, under **Settings -> Environment
+   variables**, to **Production and Preview both**. Same values as `.env.local`;
+   the sourcing table in step 2 above still applies.
+
+   | Name | Value |
+   | --- | --- |
+   | `VITE_SUPABASE_URL` | `https://<project-ref>.supabase.co` |
+   | `VITE_SUPABASE_ANON_KEY` | `eyJhbGciOi...` or `sb_publishable_...` |
+
+   This is the step whose omission is easiest to miss: the build still succeeds
+   without them and the deployed site shows the setup notice rather than an
+   error. Never put an `sb_secret_...` / `service_role` key here -- Vite inlines
+   every `VITE_*` value into a bundle served to the public internet.
+
+3. **Exclude `.wolf/*`** under **Settings -> Build -> Build watch paths**.
+   Optional, but that directory is bookkeeping and every push touching only it
+   would otherwise rebuild production for no change.
+
+4. **Widen the Supabase URL configuration.** **Authentication -> URL
+   Configuration**: Site URL becomes `https://<project>.pages.dev`, and the
+   Redirect URLs list keeps `http://localhost:5173/**` while gaining
+   `https://<project>.pages.dev/**` and `https://*.<project>.pages.dev/**`.
+   The wildcard is for per-branch preview deployments. Scope it to your own
+   project subdomain; a bare `https://*.pages.dev/**` would allowlist every site
+   on Cloudflare Pages.
+
+   Hygiene rather than a blocker: the allowlist gates mailed links, not
+   `signInWithPassword`, and no code in `src/` passes a `redirectTo`. With
+   confirmations off there is nothing to mail today. It matters the day
+   confirmation or password reset is switched on.
+
+5. **Check the live URL.** Open `/settings` directly in a fresh tab and
+   hard-refresh on `/entries` -- both must render, which is what `public/_redirects`
+   is for. Then load `/reports` and confirm in the network panel that its lazy
+   chunk returns `text/javascript`, not `text/html`. Then sign in and add an
+   entry: that is the only real proof step 2 landed.
+
+Two things to know. Cloudflare does not wait for GitHub Actions, so a preview is
+built even when `ci.yml` is red -- branch protection is what keeps a failing pull
+request out of production. And preview URLs are public, so if **Allow new users
+to sign up** is still on, this is the moment turning it off starts to pay.
