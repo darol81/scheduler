@@ -2,18 +2,18 @@
   "version": 1,
   "created_at": "2026-08-20T12:58:12.734Z",
   "lifetime": {
-    "total_tokens_estimated": 76720,
-    "total_reads": 79,
+    "total_tokens_estimated": 78379,
+    "total_reads": 80,
     "total_writes": 20,
     "anatomy_hits": 65,
-    "anatomy_misses": 13,
+    "anatomy_misses": 14,
     "repeated_reads_blocked": 0,
     "estimated_savings_vs_bare_cli": 0,
-    "real_input_tokens": 396,
-    "real_output_tokens": 184938,
-    "real_cache_read_tokens": 20066934,
-    "real_cache_creation_tokens": 397333,
-    "real_api_calls": 198,
+    "real_input_tokens": 592,
+    "real_output_tokens": 268125,
+    "real_cache_read_tokens": 31103425,
+    "real_cache_creation_tokens": 606540,
+    "real_api_calls": 296,
     "total_sessions": 19
   },
   "sessions": [
@@ -715,6 +715,38 @@
         "cache_read_input_tokens": 4648032,
         "cache_creation_input_tokens": 79888,
         "api_calls": 56
+      }
+    },
+    {
+      "id": "session-2026-08-24-1242",
+      "agent": "claude",
+      "started": "2026-08-24T09:42:17.563Z",
+      "ended": "2026-08-24T11:21:03.827Z",
+      "reads": [
+        {
+          "file": "C:/Users/topi_/.claude/plans/the-deployment-seemed-to-compiled-squirrel.md",
+          "tokens_estimated": 1659,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [],
+      "totals": {
+        "input_tokens_estimated": 1659,
+        "output_tokens_estimated": 0,
+        "reads_count": 1,
+        "writes_count": 0,
+        "repeated_reads_blocked": 0,
+        "anatomy_lookups": 0,
+        "anatomy_misses": 1,
+        "savings_estimated": 0
+      },
+      "real_usage": {
+        "input_tokens": 196,
+        "output_tokens": 83187,
+        "cache_read_input_tokens": 11036491,
+        "cache_creation_input_tokens": 209207,
+        "api_calls": 98
       }
     }
   ],
