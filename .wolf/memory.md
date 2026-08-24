@@ -110,3 +110,24 @@
 | 11:54 | Created .node-version | — | ~1 |
 | 11:54 | Edited README.md | 3→6 lines | ~82 |
 | 11:55 | Edited README.md | expanded (+100 lines) | ~1365 |
+| 12:25 | Cloudflare Pages deploy prep: _redirects/_headers/.node-version, README + manual_work_todo click-path, package-lock resync (npm ci was broken by an unlocked @vitest/ui) | public/*, .node-version, README.md, manual_work_todo.md, package-lock.json, .wolf/{STATUS,cerebrum,buglog} | committed 7efad6c on chore/cloudflare-pages; lint clean, 128/128 tests, npm ci + build verified; awaiting `gh auth login` to open issue/PR | ~52k |
+| 12:20 | Session end: 5 writes across 4 files (_redirects, _headers, .node-version, README.md) | 13 reads | ~8000 tok |
+
+## Session: 2026-08-24 12:20
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-08-24 12:21
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-08-24 12:42
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 13:10 | Recovered deleted lockfile (`git restore`), verified `npm ci`/lint/128 tests/build | package-lock.json | lock was never lost; all green | ~18k |
+| 13:15 | Diagnosed Cloudflare EUSAGE: fix commit 7efad6c was unpushed, Pages was building `main`@10c9b93 | — | root cause, not a repo defect | ~4k |
+| 13:20 | Fixed git TLS: OpenSSL CA bundle could not build chain -> `http.sslBackend schannel` | global git config | push unblocked; logged to buglog | ~5k |
+| 13:25 | Pushed `chore/cloudflare-pages`; opened issue #11; rewrote PR #10 body with `Closes #11` | .github, GitHub | `checks` green, PR CLEAN | ~9k |

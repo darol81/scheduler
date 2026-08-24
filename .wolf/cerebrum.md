@@ -107,6 +107,20 @@
   consulted by a build against a populated `node_modules`. Any dependency edit
   ends with `npm install` and the regenerated lockfile in the same commit.
 
+- **[2026-08-24] A fix that is only committed locally fixes nothing on Cloudflare.**
+  Pages builds the *production branch as GitHub has it*. `7efad6c` regenerated
+  the lockfile but sat unpushed on `chore/cloudflare-pages`, so Pages kept
+  building `main` at `10c9b93` and kept reporting the same `npm ci` EUSAGE
+  error the commit had already fixed. Before debugging a deploy, check
+  `git log origin/<production branch>` -- not the local branch -- and confirm
+  the fix is actually in the tree being built.
+
+- **[2026-08-24] Deleting `node_modules` / `package-lock.json` does not "resync" anything.**
+  Both are invisible to the remote build: `node_modules` is gitignored and Pages
+  installs its own, and a deleted-but-uncommitted lockfile is still whatever git
+  has. The recovery is `git restore package-lock.json` + `npm ci`, never a
+  hand-rebuild. Reach for `npm install` only when `package.json` genuinely changed.
+
 <!-- Mistakes made and corrected. Each entry prevents the same mistake recurring. -->
 <!-- Format: [YYYY-MM-DD] Description of what went wrong and what to do instead. -->
 

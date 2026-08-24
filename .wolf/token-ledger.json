@@ -9,12 +9,12 @@
     "anatomy_misses": 13,
     "repeated_reads_blocked": 0,
     "estimated_savings_vs_bare_cli": 0,
-    "real_input_tokens": 382,
-    "real_output_tokens": 180564,
-    "real_cache_read_tokens": 19307116,
-    "real_cache_creation_tokens": 391252,
-    "real_api_calls": 191,
-    "total_sessions": 16
+    "real_input_tokens": 396,
+    "real_output_tokens": 184938,
+    "real_cache_read_tokens": 20066934,
+    "real_cache_creation_tokens": 397333,
+    "real_api_calls": 198,
+    "total_sessions": 19
   },
   "sessions": [
     {
@@ -591,7 +591,7 @@
       "id": "session-2026-08-24-1145",
       "agent": "claude",
       "started": "2026-08-24T08:45:21.247Z",
-      "ended": "2026-08-24T09:14:13.993Z",
+      "ended": "2026-08-24T09:20:34.406Z",
       "reads": [
         {
           "file": "e:/Projects/Scheduler/package.json",
@@ -710,11 +710,11 @@
         "savings_estimated": 0
       },
       "real_usage": {
-        "input_tokens": 98,
-        "output_tokens": 30674,
-        "cache_read_input_tokens": 3888214,
-        "cache_creation_input_tokens": 73807,
-        "api_calls": 49
+        "input_tokens": 112,
+        "output_tokens": 35048,
+        "cache_read_input_tokens": 4648032,
+        "cache_creation_input_tokens": 79888,
+        "api_calls": 56
       }
     }
   ],

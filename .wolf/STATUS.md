@@ -118,9 +118,15 @@
 - 128 unit tests (was 106), 17 E2E (was 13), lint clean.
 
 **Cloudflare Pages deploy prep (2026-08-24)**
-- Branch `chore/cloudflare-pages`, NOT yet pushed: no `gh` CLI on this machine,
-  so the issue and PR must be opened by hand. Rename the branch to
-  `chore/<issue>-cloudflare-pages` before pushing, per CONTRIBUTING.
+- Branch `chore/cloudflare-pages` **pushed 2026-08-24** and tracking
+  `origin/chore/cloudflare-pages`. Pushed under the un-numbered name: no issue
+  existed yet and `gh` is installed but NOT authenticated, so the issue and PR
+  still have to be opened by hand. Prepared PR body sits in the scratchpad as
+  `PR_BODY.md`.
+- Pushing first needed a TLS fix: Git for Windows' bundled OpenSSL CA bundle
+  could not build the chain (something re-signs HTTPS on this machine).
+  `git config --global http.sslBackend schannel` set, which uses the Windows
+  certificate store. See buglog 2026-08-24.
 - New `public/_redirects` (`/* /index.html 200`) -- `src/main.jsx` mounts a
   `BrowserRouter`, so without it a bookmark or hard refresh on `/entries`,
   `/reports`, `/settings` 404s at the edge. Pages matches real assets first, so
@@ -147,15 +153,29 @@
 
 **Goal:** Finish the Cloudflare deploy, then the pre-existing loose ends.
 
-### Step 1: ship the deploy branch (needs the user -- no `gh` here)
-1. Open an issue ("Host the app on Cloudflare Pages").
-2. `git branch -m chore/<N>-cloudflare-pages` on the existing local branch, then
-   push it and open the PR with `Closes #N` **in the body** (Do-Not-Repeat).
-3. Note the PR will be the first one to pass `npm ci` in a while -- the lockfile
-   fix rides along in it. Say so in the PR body so it does not read as noise.
+### Step 1: ship the deploy branch -- READY TO MERGE, awaiting the user's click
+- Issue **#11** `[Task] Host the app on Cloudflare Pages` (label `enhancement`).
+- PR **#10** `host the app on cloudflare pages`, `chore/cloudflare-pages` -> `main`.
+  The user had already opened it from the browser with the template's bare
+  `Closes #` placeholder; the body has been rewritten and now carries
+  `Closes #11` **in the body** (Do-Not-Repeat).
+- `checks` **green** (21s) and GitGuardian pass; `mergeStateStatus: CLEAN`. This
+  is the first green `npm ci` in a while -- the lockfile fix is what unblocked it.
+- Branch name keeps the un-numbered `chore/cloudflare-pages` rather than
+  CONTRIBUTING's `<type>/<issue>-<slug>`: the PR was already open against it, and
+  deleting the remote ref to rename would have closed the PR. Not worth the churn.
+- **Remaining: the user squash-merges #10.** Merging is deliberately left to them.
+- **The Cloudflare failure was NOT a repo problem**: `main` is still `10c9b93`
+  (pre-fix lockfile) and Pages builds the production branch as GitHub has it, so
+  it kept rebuilding code that predated the fix. Merging #10 is what fixes it.
 
 ### Step 2: the Cloudflare + Supabase dashboard work (needs the user)
-Follow `manual_work_todo.md` step 5. The short version:
+Follow `manual_work_todo.md` step 5. **First confirm the project is a Pages
+project, not a Worker**: the user's dashboard showed a deploy command of
+`npx wrangler deploy`, which is a Workers field and would need a
+`wrangler.jsonc` this repo does not have. A Pages project has NO deploy command.
+The user chose to recreate it via Workers & Pages -> Create -> **Pages** tab ->
+Connect to Git. The short version:
 - Pages project: production branch `main`, preset Vite, build `npm run build`,
   output `dist`, root `/`. No install command -- Pages runs `npm clean-install`.
 - `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` in **Production and Preview
