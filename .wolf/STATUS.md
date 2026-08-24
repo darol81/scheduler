@@ -188,54 +188,88 @@ inlines every `VITE_*`), then probes `/auth/v1/health` before `/auth/v1/signup`
 so a wrong key cannot masquerade as a successful lockdown. No secrets needed
 from the user, and it doubles as a check that the Pages env vars are live.
 
-**Layer 2 (Cloudflare Access): half on, and NOT by anyone's deliberate choice.**
-Measured with `curl -L`:
-- `946884e4.scheduler-7u8.pages.dev` -> **302 to
-  `scheduler-7u8-pages.cloudflareaccess.com/cdn-cgi/access/login/...`** --
-  preview deployments ARE gated.
-- `scheduler-7u8.pages.dev` -> **200, no redirect** -- production is NOT gated.
+**Layer 2 (Cloudflare Access): on for everything except one hostname.**
+The Pages *Preview access* policy is enabled. Measured with `curl -L`, watching
+for a 302 to `*.cloudflareaccess.com/cdn-cgi/access/login/`:
 
-Exactly the split Cloudflare's own UI warns about under *Settings -> General ->
-Preview access*: "This protects preview deployment URLs only. Production
-pages.dev and custom domains are managed separately in Zero Trust."
+| Hostname | |
+| --- | --- |
+| `scheduler-7u8.pages.dev` (project alias) | **OPEN** |
+| `a67d7a4f.scheduler-7u8.pages.dev` (production deployment hash) | GATED |
+| `946884e4.scheduler-7u8.pages.dev` (older production hash) | GATED |
+| `69689ba9.scheduler-7u8.pages.dev` (preview deployment hash) | GATED |
+| `main.scheduler-7u8.pages.dev` (branch alias) | GATED |
+| `docs-12-record-deployment-state.scheduler-7u8.pages.dev` | GATED |
 
-**The consequential finding: a Zero Trust organization already exists** --
-`scheduler-7u8-pages.cloudflareaccess.com` -- provisioned by the Pages preview
-access feature, apparently without the billing step. It also explains the
-Access email the user received and did not expect. (The assistant never touched
-the Cloudflare account; it has no access to it.)
+So the policy is **broader than Cloudflare's own wording suggests**. The UI says
+"This protects preview deployment URLs only. Production pages.dev and custom
+domains are managed separately in Zero Trust", which reads as though production
+deployments are untouched. In fact every *deployment-specific* and *branch-alias*
+hostname is gated, including production deployments' own hash URLs. What is
+"managed separately" is precisely one thing: the bare project alias. Do not
+infer the split from the prose -- measure it.
 
-### Step 1: decide production Access -- needs the user, no card
-**Constraint, stated flatly by the user: no payment details, in any case.**
-Zero Trust onboarding normally asks for a card even on the Free plan (50 seats,
-never charged). But the org already exists, so the open question is narrow:
+Net public surface: **one hostname**, `scheduler-7u8.pages.dev`.
 
-> Does **Zero Trust -> Access controls -> Applications -> Create -> Self-hosted**
-> complete without a billing prompt?
+A Zero Trust organization therefore already exists --
+`scheduler-7u8-pages.cloudflareaccess.com` -- provisioned by enabling Preview
+access. That also explains the Access PIN email the user received and did not
+expect. (The assistant never touched the Cloudflare account; it has no access.)
 
-- **If yes** -- add an application for hostname `scheduler-7u8.pages.dev` (delete
-  any leading `*`; documented known issue), policy Allow / Include / **Emails** =
-  the owner, identity provider **One-time PIN**. Then production matches previews.
-- **If it demands a card** -- stop. Do not enter one. Layer 1 already closed the
-  only real hole; Layer 2 reduces attack surface, it does not close a known gap.
+### SETTLED 2026-08-24: production Access declined. Do not reopen.
+The org existing did **not** make the application free. **Zero Trust -> Access
+controls -> Applications** forces a plan chooser first, and picking **Free**
+still demands card details before the Self-hosted form is ever reached. The user
+declines to enter payment details, in any case. **This is a final decision, not
+a blocked task** -- a future session should not re-propose Cloudflare Access.
 
-**Residual risk if stopping here** (accepted knowingly, not overlooked): the
-login page and the bundle -- including the anon key -- stay public. That is by
-design; RLS is the isolation boundary and holds regardless of who holds the key.
-With signups closed there is no way to obtain a session at all. The one thing
-that would break this is a future table added without RLS + an own-rows policy,
-which `CLAUDE.md` already flags; it becomes the single point of failure once
-Access is not fronting the site.
+That costs little. Access protects the site origin; the browser calls
+`<project-ref>.supabase.co` directly, a hostname Access never sees, so it could
+never have closed the signup endpoint. Supabase did. Layer 2 would have reduced
+attack surface, not fixed a known hole.
 
-Not doing, but recorded: a `functions/_middleware.js` doing HTTP Basic Auth
-would hide the site with no Zero Trust and no card. Rejected for now only
-because it needs a source file, and the user asked for none.
+**Residual risk, accepted knowingly:** the one open hostname serves the login
+page and the bundle, anon key included. Both are public by design -- Vite inlines
+every `VITE_*`. RLS is the isolation boundary and holds regardless of who holds
+the key; with signups closed there is no way to obtain a session at all. **The
+one thing that would break this** is a future table added without
+`enable row level security` plus an own-rows policy, which `CLAUDE.md` already
+flags. With no Access in front, that is now the single point of failure -- re-read
+it before the next schema change.
 
-### Step 2: record the lockdown in the docs (own issue/branch/PR)
+Alternatives recorded so they are not rediscovered:
+- `functions/_middleware.js` doing HTTP Basic Auth would hide the site with no
+  Zero Trust and no card. Needs a source file and a second password; the user
+  asked for no source changes. Revisit only if the login page draws real traffic.
+- A **custom domain** would make zone-level WAF custom rules available (an
+  IP-allowlist route needing no Zero Trust seat), and would be the moment to add
+  `Strict-Transport-Security` to `public/_headers` and move the Supabase Site URL.
+
+### Deployment hygiene: do NOT delete accumulated deployments
+Each Pages deployment keeps its own immutable URL, so they pile up. Leave them:
+1. They are snapshots of one commit each, not duplicate links; the alias always
+   serves the newest production one.
+2. They are already private -- every hash and branch-alias host is behind Access
+   per the table above, so deleting them closes no public exposure.
+3. **Old production deployments are the rollback targets.** Pages rollback
+   reverts to a previous *production* deployment; deleting them throws away
+   instant revert. Preview deployments are explicitly not valid rollback targets,
+   so those are the only safe ones to tidy.
+4. They cost nothing -- no documented retention limit or storage charge, and
+   unlimited preview deployments are allowed. The Free-plan quota that bites is
+   **500 builds/month**, which counts builds run, not deployments kept.
+
+Never delete the deployment the alias currently points at.
+
+The real fix is upstream: **exclude `.wolf/*` under Settings -> Build -> Build
+watch paths.** PR #13 touched only `.wolf/**` and still triggered a build,
+burning a build and creating a deployment nobody wanted.
+
+### Step 1: record the lockdown in README (own issue/branch/PR)
 README 1.3 and Deploying say to *close* signups; nothing says the deployment IS
-closed, gives the real hostnames, or records the no-card decision and the
-residual risk above. Worth writing down now that step 1 is measured rather than
-intended.
+closed, gives the real hostname, or records the no-card decision and the
+residual risk above. Worth writing down now that it is measured rather than
+intended -- but as its own PR, not a rider on #13.
 
 ### Still open from before
 #### Loose end 1: turn the nightly on (2 min, needs the user)

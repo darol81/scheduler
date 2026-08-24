@@ -109,15 +109,35 @@
   mounted and rendering normally -- it just reports that registrations are shut.
   Nobody needs to rip the route out to lock the app down.
 
-- **Pages "Preview access" gates previews ONLY, and quietly creates a Zero Trust org.**
-  *Settings -> General -> Preview access* protects `<hash>.<project>.pages.dev`
-  and explicitly not the production `pages.dev` host -- Cloudflare's own UI says
-  so. Enabling it provisioned `scheduler-7u8-pages.cloudflareaccess.com` without
-  the usual Zero Trust billing step, which is why an unexpected Access PIN email
-  arrived. Production needs a *separate* self-hosted application under Zero
-  Trust. Measure which is which with `curl -L` and watch for a 302 to
-  `.cloudflareaccess.com/cdn-cgi/access/login/` -- do not trust the dashboard's
-  prose.
+- **Pages "Preview access" gates far more than its name says -- measure, don't read.**
+  Cloudflare's UI claims it "protects preview deployment URLs only. Production
+  pages.dev and custom domains are managed separately in Zero Trust", which reads
+  as though production deployments are untouched. Measured with `curl -L` on this
+  project, **every** deployment-specific hash host AND every branch alias is
+  gated -- including production deployments' own hash URLs. Exactly one hostname
+  stays open: the bare project alias (`scheduler-7u8.pages.dev`). Test it by
+  watching for a 302 to `*.cloudflareaccess.com/cdn-cgi/access/login/`; the
+  status code alone is useless, since the Access login page is itself a 200.
+  Enabling this also provisions a Zero Trust org
+  (`scheduler-7u8-pages.cloudflareaccess.com`) with no billing step, which is why
+  an unexpected Access PIN email can arrive.
+
+- **An existing Zero Trust org does NOT make Access applications free.**
+  *Zero Trust -> Access controls -> Applications* forces a plan chooser before
+  the Self-hosted form, and choosing **Free** still demands card details. So the
+  org being auto-provisioned by Preview access buys nothing toward protecting the
+  production alias. Decided here: **declined, permanently** -- do not re-propose
+  Cloudflare Access for this project.
+
+- **Pages deployments accumulate by design; do not delete them.**
+  Each is an immutable snapshot of one commit with its own URL, and old
+  *production* deployments are the rollback targets (previews explicitly are
+  not). Deleting them throws away instant revert and closes no exposure, since
+  they are already behind Access. There is no documented retention limit or
+  storage charge; the Free-plan quota that actually bites is **500 builds/month**,
+  which counts builds run, not deployments kept. Never delete the one the alias
+  points at. The real lever is **Build watch paths** -- excluding `.wolf/*` stops
+  bookkeeping-only commits triggering builds nobody wants.
 
 - **A deployed Vite app can be audited without asking for any credentials.**
   Every `VITE_*` value is inlined into the bundle and served publicly by design,
