@@ -148,16 +148,32 @@ Three one-time setup steps:
    runs. It is deliberately *not* part of `schema.sql`, so a production project
    never has it at all.
 
-`.env.e2e.local` is optional -- these are the defaults:
+`.env.e2e.local` is **required**, because `E2E_PASSWORD` has no default:
+
+```
+E2E_PASSWORD=<the password you gave both accounts>
+```
+
+Everything else defaults, so those lines are optional and only needed if you
+chose different values:
 
 ```
 E2E_EMAIL_A=worktime-e2e-a@worktime-e2e.dev
 E2E_EMAIL_B=worktime-e2e-b@worktime-e2e.dev
-E2E_PASSWORD=playwright-e2e-pw
 E2E_PORT=5175
 ```
 
 It is gitignored by the existing `*.local` pattern.
+
+**The password is deliberately not written down anywhere in this repository.**
+It used to have a committed default, which meant the real password of two live
+accounts was published here -- anyone reading the repo could sign in to the
+deployed app as them. RLS confined them to those two accounts, but it was still
+unauthorised access to a live project. The addresses may stay in the open: they
+are identifiers, and they have to match the allowlist in `supabase/e2e.sql`.
+Both accounts share the one `E2E_PASSWORD` value (see `e2e/helpers/accounts.js`),
+so give them the same password. `npm run e2e` fails with an explanatory error
+until it is set.
 
 The suite only ever calls `signInWithPassword`, which sends no mail and is not
 metered, so none of this depends on your Supabase mail settings.

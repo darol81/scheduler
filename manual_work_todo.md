@@ -102,8 +102,15 @@ Needed once before `npm run e2e` will run. See README section 3.2.
 
    | Email | Password |
    | --- | --- |
-   | `worktime-e2e-a@worktime-e2e.dev` | `playwright-e2e-pw` |
-   | `worktime-e2e-b@worktime-e2e.dev` | `playwright-e2e-pw` |
+   | `worktime-e2e-a@worktime-e2e.dev` | pick one, 10-72 chars |
+   | `worktime-e2e-b@worktime-e2e.dev` | **the same one** |
+
+   Both accounts must share a single password -- `e2e/helpers/accounts.js` gives
+   A and B the same `E2E_PASSWORD`. Put that value in `.env.e2e.local` and, for
+   the nightly workflow, in the `E2E_PASSWORD` repository secret. **Do not write
+   it into any tracked file.** It used to have a committed default, which
+   published the real password of two live accounts -- anyone reading the repo
+   could sign in to the deployed app as them.
 
    Creating them here rather than letting the suite sign up is deliberate:
    sign-up is the only auth path that touches Supabase's email system. Doing it

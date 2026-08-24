@@ -34,9 +34,26 @@ export function loadE2EEnv() {
   // The addresses only have to match the two accounts you created by hand in
   // the dashboard and the allowlist in supabase/e2e.sql. Nothing is ever
   // mailed to them, so they need not be deliverable or belong to anyone.
+  // They are identifiers, not credentials, so defaulting them is fine.
   process.env.E2E_EMAIL_A = env.E2E_EMAIL_A || 'worktime-e2e-a@worktime-e2e.dev'
   process.env.E2E_EMAIL_B = env.E2E_EMAIL_B || 'worktime-e2e-b@worktime-e2e.dev'
-  process.env.E2E_PASSWORD = env.E2E_PASSWORD || 'playwright-e2e-pw'
+
+  // The password deliberately has NO default. It used to fall back to a literal
+  // committed here, which meant the real password of two live accounts sat in a
+  // public repo -- anyone could sign in to the deployed app as them. Both
+  // accounts share this one value (see helpers/accounts.js), so set it once in
+  // .env.e2e.local locally and as the E2E_PASSWORD secret for nightly.yml.
+  // Failing loudly is the point: a default is what let the leak happen.
+  if (!env.E2E_PASSWORD) {
+    throw new Error(
+      'e2e: E2E_PASSWORD is not set, and there is no default on purpose.\n' +
+      'Put it in .env.e2e.local (gitignored by the *.local pattern):\n' +
+      '  E2E_PASSWORD=<the password of both test accounts>\n' +
+      'For CI, set it as a repository secret -- nightly.yml already reads it.\n' +
+      'Never commit the value: it is the real password of two live accounts.',
+    )
+  }
+  process.env.E2E_PASSWORD = env.E2E_PASSWORD
 
   const port = Number(env.E2E_PORT || 5175)
   return { port, baseURL: `http://127.0.0.1:${port}` }
