@@ -151,50 +151,91 @@
 
 ## 🚀 Next phase
 
-**Goal:** Finish the Cloudflare deploy, then the pre-existing loose ends.
+**Goal:** Lock the live deploy down to a single user, then the pre-existing
+loose ends.
 
-### Step 1: ship the deploy branch -- READY TO MERGE, awaiting the user's click
-- Issue **#11** `[Task] Host the app on Cloudflare Pages` (label `enhancement`).
-- PR **#10** `host the app on cloudflare pages`, `chore/cloudflare-pages` -> `main`.
-  The user had already opened it from the browser with the template's bare
-  `Closes #` placeholder; the body has been rewritten and now carries
-  `Closes #11` **in the body** (Do-Not-Repeat).
-- `checks` **green** (21s) and GitGuardian pass; `mergeStateStatus: CLEAN`. This
-  is the first green `npm ci` in a while -- the lockfile fix is what unblocked it.
-- Branch name keeps the un-numbered `chore/cloudflare-pages` rather than
-  CONTRIBUTING's `<type>/<issue>-<slug>`: the PR was already open against it, and
-  deleting the remote ref to rename would have closed the PR. Not worth the churn.
-- **Remaining: the user squash-merges #10.** Merging is deliberately left to them.
-- **The Cloudflare failure was NOT a repo problem**: `main` is still `10c9b93`
-  (pre-fix lockfile) and Pages builds the production branch as GitHub has it, so
-  it kept rebuilding code that predated the fix. Merging #10 is what fixes it.
+### DONE 2026-08-24: the deploy shipped
+- Issue **#11** and PR **#10** both closed; `main` is `eef10ec`. Local `main`
+  synced, `chore/cloudflare-pages` deleted local and remote.
+- The site is **live on Cloudflare Pages**, project `scheduler`.
+- Cost the user two false starts, both worth remembering:
+  1. `Create application` drops you in a **Workers** wizard ("Create a Worker"),
+     which makes Deploy command and an API token mandatory and then fails,
+     because `npx wrangler deploy` wants a `wrangler.jsonc` this repo lacks.
+     Pages is `Create application -> **Pages** tab -> Connect to Git`, has NO
+     deploy command and needs no API token. Pages is not deprecated.
+  2. The user deleted `node_modules` + `package-lock.json` trying to "resync"
+     with Cloudflare. Neither is visible to the remote build. See Do-Not-Repeat.
+- Also fixed en route: `git push` failed with an OpenSSL CA error; set
+  `http.sslBackend=schannel` globally. See buglog 2026-08-24.
 
-### Step 2: the Cloudflare + Supabase dashboard work (needs the user)
-Follow `manual_work_todo.md` step 5. **First confirm the project is a Pages
-project, not a Worker**: the user's dashboard showed a deploy command of
-`npx wrangler deploy`, which is a Workers field and would need a
-`wrangler.jsonc` this repo does not have. A Pages project has NO deploy command.
-The user chose to recreate it via Workers & Pages -> Create -> **Pages** tab ->
-Connect to Git. The short version:
-- Pages project: production branch `main`, preset Vite, build `npm run build`,
-  output `dist`, root `/`. No install command -- Pages runs `npm clean-install`.
-- `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` in **Production and Preview
-  both**. Missing them does not fail the build; the site just serves
-  `<SetupNotice />`. That is the first thing to check on a "working" deploy that
-  shows the wrong screen.
-- Build watch paths: exclude `.wolf/*`, or bookkeeping pushes rebuild production.
-- Supabase URL Configuration: Site URL `https://<project>.pages.dev`; redirect
-  URLs keep localhost and gain `https://<project>.pages.dev/**` plus
-  `https://*.<project>.pages.dev/**` (previews). Scope the wildcard to the
-  project subdomain.
+### The live deployment, as measured 2026-08-24
 
-### Step 3: verify on the live URL
-Open `/settings` in a fresh tab and hard-refresh `/entries` (proves
-`_redirects`); load `/reports` and confirm its lazy chunk returns
-`text/javascript`, not `text/html`; then sign in and add an entry, which is the
-only real proof the env vars are wired. Then repeat the sign-in on a PR preview
-URL -- a failure there means the Preview-scope vars or the wildcard redirect URL
-is missing.
+**Hostnames** -- Pages appended a suffix because `scheduler` was taken:
+- production: **`https://scheduler-7u8.pages.dev`**
+- a deployment URL looks like `https://<hash>.scheduler-7u8.pages.dev`
+
+**Layer 1 (Supabase signups): DONE and verified at the API level.**
+`POST /auth/v1/signup` returns
+`422 {"error_code":"signup_disabled","msg":"Signups not allowed for this instance"}`.
+That is the proof that counts -- the browser saying "New registrations are
+closed." only shows the UI renders `friendlyAuthError`'s mapping. No source
+change was needed or made.
+
+Reusable technique: `scratchpad/probe-live.sh` derives the Supabase URL and anon
+key **from the deployed bundle itself** (both are public by design -- Vite
+inlines every `VITE_*`), then probes `/auth/v1/health` before `/auth/v1/signup`
+so a wrong key cannot masquerade as a successful lockdown. No secrets needed
+from the user, and it doubles as a check that the Pages env vars are live.
+
+**Layer 2 (Cloudflare Access): half on, and NOT by anyone's deliberate choice.**
+Measured with `curl -L`:
+- `946884e4.scheduler-7u8.pages.dev` -> **302 to
+  `scheduler-7u8-pages.cloudflareaccess.com/cdn-cgi/access/login/...`** --
+  preview deployments ARE gated.
+- `scheduler-7u8.pages.dev` -> **200, no redirect** -- production is NOT gated.
+
+Exactly the split Cloudflare's own UI warns about under *Settings -> General ->
+Preview access*: "This protects preview deployment URLs only. Production
+pages.dev and custom domains are managed separately in Zero Trust."
+
+**The consequential finding: a Zero Trust organization already exists** --
+`scheduler-7u8-pages.cloudflareaccess.com` -- provisioned by the Pages preview
+access feature, apparently without the billing step. It also explains the
+Access email the user received and did not expect. (The assistant never touched
+the Cloudflare account; it has no access to it.)
+
+### Step 1: decide production Access -- needs the user, no card
+**Constraint, stated flatly by the user: no payment details, in any case.**
+Zero Trust onboarding normally asks for a card even on the Free plan (50 seats,
+never charged). But the org already exists, so the open question is narrow:
+
+> Does **Zero Trust -> Access controls -> Applications -> Create -> Self-hosted**
+> complete without a billing prompt?
+
+- **If yes** -- add an application for hostname `scheduler-7u8.pages.dev` (delete
+  any leading `*`; documented known issue), policy Allow / Include / **Emails** =
+  the owner, identity provider **One-time PIN**. Then production matches previews.
+- **If it demands a card** -- stop. Do not enter one. Layer 1 already closed the
+  only real hole; Layer 2 reduces attack surface, it does not close a known gap.
+
+**Residual risk if stopping here** (accepted knowingly, not overlooked): the
+login page and the bundle -- including the anon key -- stay public. That is by
+design; RLS is the isolation boundary and holds regardless of who holds the key.
+With signups closed there is no way to obtain a session at all. The one thing
+that would break this is a future table added without RLS + an own-rows policy,
+which `CLAUDE.md` already flags; it becomes the single point of failure once
+Access is not fronting the site.
+
+Not doing, but recorded: a `functions/_middleware.js` doing HTTP Basic Auth
+would hide the site with no Zero Trust and no card. Rejected for now only
+because it needs a source file, and the user asked for none.
+
+### Step 2: record the lockdown in the docs (own issue/branch/PR)
+README 1.3 and Deploying say to *close* signups; nothing says the deployment IS
+closed, gives the real hostnames, or records the no-card decision and the
+residual risk above. Worth writing down now that step 1 is measured rather than
+intended.
 
 ### Still open from before
 #### Loose end 1: turn the nightly on (2 min, needs the user)
