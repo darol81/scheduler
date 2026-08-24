@@ -155,6 +155,31 @@
   must use the real one, so read it off the project rather than deriving it from
   the project name.
 
+- **A convenience default for a credential IS the leak.**
+  `E2E_PASSWORD` was only ever public because `e2e/helpers/env.js` fell back to a
+  literal so the suite would run with no setup. `nightly.yml` already read the
+  value from a repository secret, so the private path existed all along and the
+  fallback bought nothing but published the real password of two live accounts.
+  A credential with a default is a credential in the repo. Make it required and
+  throw a message naming where the value belongs.
+
+- **Rotate a leaked credential; do not rewrite history.** Rotation makes the old
+  value worthless, which is the whole objective, and avoids rewriting a
+  protected branch. Verify the rotation **at the API** -- the old password must
+  return 400 where it returned 200 -- not by looking at the dashboard. Same logic
+  retired `.wolf/dashboard-token`: untrack + gitignore, no history surgery, since
+  it sat in the very first commit and nothing read it.
+
+- **The E2E suite needs TWO env files, and the error message names only one.**
+  `loadE2EEnv` runs `loadEnv('e2e', ...)` so it sees `.env.local` *and*
+  `.env.e2e.local`. But the suite's `webServer` spawns `npm run dev`, which is Vite
+  in **development** mode and never loads `.env.e2e.local`. So the Supabase
+  `VITE_*` values must live in `.env.local`; putting them in `.env.e2e.local`
+  clears the error and then fails all 17 specs against a `SetupNotice` with no
+  login form. Note also that a missing `npx playwright install chromium` presents
+  as all specs failing, which reads like a config fault rather than a missing
+  binary -- check the first error line for `Executable doesn't exist`.
+
 ## Do-Not-Repeat
 
 - **[2026-08-21] `Closes #N` must be in the PR *body*, not the commit message.**
