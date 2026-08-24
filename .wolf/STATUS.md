@@ -272,16 +272,14 @@ residual risk above. Worth writing down now that it is measured rather than
 intended -- but as its own PR, not a rider on #13.
 
 ### Still open from before
-#### Loose end 1: turn the nightly on (2 min, needs the user)
-The e2e job skips itself until these exist:
-```bash
-gh secret set VITE_SUPABASE_URL
-gh secret set VITE_SUPABASE_ANON_KEY
-gh secret set E2E_PASSWORD
-```
-Then `gh workflow run nightly.yml && gh run watch` and confirm 17/17 on a
+#### Loose end 1: turn the nightly on -- SECRETS SET 2026-08-24
+All three repository secrets now exist (`VITE_SUPABASE_URL`,
+`VITE_SUPABASE_ANON_KEY`, `E2E_PASSWORD`), so the e2e job no longer skips itself.
+Remaining: `gh workflow run nightly.yml && gh run watch` and confirm 17/17 on a
 runner. E2E_EMAIL_A/B are deliberately NOT secrets -- the defaults in
-`e2e/helpers/env.js` already match the allowlist in `supabase/e2e.sql`.
+`e2e/helpers/env.js` already match the allowlist in `supabase/e2e.sql`. Note that
+`E2E_PASSWORD` no longer has a default there (#17), so a runner without the
+secret now fails loudly instead of silently using a published password.
 
 Watch for: the runner's egress IP is shared Azure space, so GoTrue's per-IP
 token limit is likelier to bite there than locally (~15 sign-ins per run). If
@@ -297,13 +295,31 @@ alter table public.categories disable row level security;   -- expect FAIL
 it must pass again. Do NOT use `drop policy` -- with RLS on and no policy the
 table is deny-all, so the spec stays green while the app is broken.
 
-#### Loose end 3: turn "Allow new users to sign up" off?
-The E2E suite no longer depends on it. Nothing blocks the decision.
+#### Loose end 3: turn "Allow new users to sign up" off -- DONE 2026-08-24
+Off, and verified at the API rather than in the UI: `POST /auth/v1/signup`
+returns `422 {"error_code":"signup_disabled"}`. `/register` still renders
+normally and reports "New registrations are closed." -- no code changed, because
+`friendlyAuthError` already mapped the code.
 
-#### Also worth a look, unrelated
-`.wolf/dashboard-token` is a tracked 64-hex-character file in a **public**
-repo. If it is a real credential it should be rotated, gitignored, and purged
-from history; if it is only a localhost nonce it should still not be committed.
+#### RESOLVED 2026-08-24: `.wolf/dashboard-token`
+Was a tracked 64-hex file in a **public** repo, committed in the first commit
+(`ab5989f`) and read by **nothing** -- no consumer in the repo or the `.wolf/`
+tooling. The owner has never used the OpenWolf dashboard, so it was a localhost
+nonce, not a live credential. Untracked with `git rm --cached` and gitignored;
+the local file is kept so nothing breaks. **Deliberately no history rewrite** --
+it sits in the first commit, so purging means rewriting every commit on a
+protected branch, which is disproportionate here. Do not reopen this.
+
+#### Local E2E setup: the two env files are NOT redundant
+Cost real time to diagnose, so: `.env.local` holds `VITE_SUPABASE_URL` /
+`VITE_SUPABASE_ANON_KEY` and feeds the `npm run dev` server the suite spawns;
+`.env.e2e.local` holds `E2E_PASSWORD` and feeds `loadE2EEnv`. `loadEnv('e2e', ...)`
+reads both, but the dev server runs in Vite's *development* mode and never sees
+`.env.e2e.local` -- so putting the Supabase values there clears the error message
+and then fails all 17 specs against a `SetupNotice` with no login form. Also:
+`npx playwright install chromium` is genuinely required, and its absence presents
+as all 17 specs failing, which reads like a config fault. Check the first error
+line for `Executable doesn't exist`. Both files are gitignored.
 
 #### Not verified: the change-password happy path against real Supabase
 The failure paths are covered end-to-end (`e2e/settings.spec.js`, 4 specs), and

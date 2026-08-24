@@ -111,6 +111,39 @@
       ],
       "occurrences": 1,
       "last_seen": "2026-08-24"
+    },
+    {
+      "date": "2026-08-24",
+      "error_message": "GitGuardian: E2E account password committed to a public repository. E2E_PASSWORD defaulted to the literal 'playwright-e2e-pw' in e2e/helpers/env.js, repeated in README.md, manual_work_todo.md and .env.example.",
+      "file": "e2e/helpers/env.js",
+      "root_cause": "The credential had a convenience default so `npm run e2e` would work with no setup. That default WAS the leak: it is the real password of two live accounts in the production Supabase project, and the repository is public. nightly.yml already read E2E_PASSWORD from a repository secret, so the private path existed all along -- nothing was gained by the fallback. Verified exploitable rather than theoretical: both accounts returned HTTP 200 from POST /auth/v1/token?grant_type=password against the live project, using the anon key scraped from the deployed bundle. It also partly undid the deployment lockdown -- signups had been closed so nobody could CREATE an account, but two accounts with a published password already existed. Blast radius was bounded by RLS: every policy compares auth.uid() to the row owner, so an intruder was confined to those two empty accounts and could not reach the owner's data; they could still burn quota, change the password to lock the suite out, or call e2e_reset_account() on their own rows.",
+      "fix": "Removed the default entirely; loadE2EEnv now throws a message naming .env.e2e.local and the CI secret, because failing loudly is the point. Scrubbed the literal from all tracked files. Kept the two ADDRESSES public -- they are identifiers, not credentials, and must match the allowlist in supabase/e2e.sql. Rotated both accounts (same password: helpers/accounts.js gives A and B one shared E2E_PASSWORD) and verified at the API -- the old value now returns 400 where it returned 200. Did NOT rewrite git history: rotation makes the old value worthless and avoids rewriting a protected branch. PR #17, issue #16.",
+      "tags": [
+        "security",
+        "credentials",
+        "leak",
+        "e2e",
+        "supabase",
+        "gitguardian"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-08-24"
+    },
+    {
+      "date": "2026-08-24",
+      "error_message": "e2e: .env.local must define VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY -- raised even though .env.e2e.local existed and held E2E_PASSWORD.",
+      "file": "e2e/helpers/env.js",
+      "root_cause": "The two env files are not redundant; they feed different processes, and the error text names only one of them. loadE2EEnv runs loadEnv('e2e', ...) so it sees .env.local AND .env.e2e.local -- but the suite's webServer spawns `npm run dev`, which is Vite in DEVELOPMENT mode and never loads .env.e2e.local. Putting the Supabase values in .env.e2e.local therefore clears this error and then fails all 17 specs, because the dev server boots unconfigured and renders SetupNotice with no login form for the tests to drive.",
+      "fix": "Created .env.local with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (both public by design and identical to the Cloudflare Pages env vars -- they can be scraped from the deployed bundle, so no secret handling is needed), leaving E2E_PASSWORD in .env.e2e.local. Both are gitignored. A second failure hid behind this one: all 17 specs then failed with \"browserType.launch: Executable doesn't exist\" because `npx playwright install chromium` had never been run -- a missing binary that reads like a config fault. After both, npm run e2e passes 17/17 in 26s. README section 3.2 now documents the split.",
+      "tags": [
+        "e2e",
+        "playwright",
+        "vite",
+        "env",
+        "setup"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-08-24"
     }
   ]
 }

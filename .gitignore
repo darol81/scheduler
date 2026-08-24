@@ -13,3 +13,6 @@ playwright-report
 test-results
 .playwright
 html
+# OpenWolf local dashboard nonce. Was tracked in a public repo since the
+# first commit and read by nothing; untracked in #18. Keep it local.
+.wolf/dashboard-token

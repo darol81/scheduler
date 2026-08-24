@@ -165,6 +165,26 @@ E2E_PORT=5175
 
 It is gitignored by the existing `*.local` pattern.
 
+**You need `.env.local` as well, and the two are not redundant** -- they feed
+two different processes:
+
+| File | Read by | Holds |
+| --- | --- | --- |
+| `.env.local` | the `npm run dev` server the suite spawns | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` |
+| `.env.e2e.local` | `loadE2EEnv` in `playwright.config.js` | `E2E_PASSWORD` |
+
+The error message names only `.env.local`, which misleads: `loadE2EEnv` calls
+`loadEnv('e2e', ...)` and so reads **both** files. Putting the Supabase values in
+`.env.e2e.local` therefore clears the error and then fails all 17 specs -- the
+`webServer` runs `npm run dev`, which is Vite in *development* mode and never
+loads `.env.e2e.local`, so the app boots unconfigured and serves `SetupNotice`
+with no login form for the tests to drive. Keep the app's credentials in
+`.env.local` and only the test password in `.env.e2e.local`.
+
+Do not skip `npx playwright install chromium` either. Without the browser every
+spec fails at once, which looks like a configuration fault; the giveaway is
+`browserType.launch: Executable doesn't exist` on the first error line.
+
 **The password is deliberately not written down anywhere in this repository.**
 It used to have a committed default, which meant the real password of two live
 accounts was published here -- anyone reading the repo could sign in to the
