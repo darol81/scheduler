@@ -90,6 +90,50 @@ The key goes in the browser either way, which is the whole reason section 1.2's
 RLS policies matter. A secret key (`sb_secret_...` / `service_role`) must never
 go in this file -- it would ship to every visitor and bypass those policies.
 
+### 2.1 Setting up another machine
+
+`git pull` brings the repository but none of the gitignored files. There are
+exactly three, and **only one of them is a secret**:
+
+| File | Holds | Secret? | Where to get it |
+| --- | --- | --- | --- |
+| `.env.local` | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | **No** | Cloudflare Pages -> Settings -> Environment variables |
+| `.env.e2e.local` | `E2E_PASSWORD` | **Yes** | Your password manager |
+| `.wolf/dashboard-token` | OpenWolf localhost nonce | -- | **Nothing. Skip it.** |
+
+```bash
+git clone <this repo> && cd scheduler
+npm ci                              # not npm install -- see below
+cp .env.example .env.local          # then fill in the two VITE_ values
+printf 'E2E_PASSWORD=...
+' > .env.e2e.local   # only if you will run E2E here
+npx playwright install chromium     # only if you will run E2E here, ~115 MB
+npm run dev
+```
+
+Four things worth knowing:
+
+- **`.env.local` holds no secret.** Vite inlines every `VITE_*` value into the
+  bundle it serves to the public, so both values are already readable from the
+  deployed site. Copy them from the Cloudflare settings; there is nothing to
+  transport securely. **`E2E_PASSWORD` is the opposite** -- it is the real
+  password of two live accounts, so it belongs in a password manager and never
+  in a file that is committed, an email, or a chat.
+- **`npm ci`, not `npm install`.** `ci` installs exactly what
+  `package-lock.json` pins; `install` may quietly rewrite it. A lockfile that had
+  drifted from `package.json` once broke the deploy and both CI workflows while
+  everything still worked locally.
+- **Do not merge the two env files.** Section 3.2 explains why: `loadE2EEnv`
+  reads both, but the dev server the E2E suite spawns runs in Vite's
+  *development* mode and never loads `.env.e2e.local`.
+- **If every E2E spec fails at once**, suspect the missing browser before the
+  configuration. The giveaway is
+  `browserType.launch: Executable doesn't exist` on the first error line.
+
+`npm run lint`, `npm test` and `npm run build` all work on a bare clone with no
+env files at all -- the unit tests never touch the network and the build simply
+inlines empty values. Only `npm run dev` and `npm run e2e` need them.
+
 ## 3. Tests
 
 ### 3.1 Unit tests
